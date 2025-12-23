@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>com.solsynx</groupId>
+    <artifactId>jmeter-dubbo-plugin</artifactId>
+    <version>0.0.1</version>
+  </parent>
+
+  <artifactId>jmeter-dubbo-zookeeper</artifactId>
+  <packaging>jar</packaging>
+
+  <name>JMeter Dubbo Plugin :: Registry Zookeeper</name>
+  <description>Zookeeper registry support for JMeter Dubbo Plugin</description>
+
+  <dependencies>
+    <!-- Core module dependency -->
+    <dependency>
+      <groupId>com.solsynx</groupId>
+      <artifactId>jmeter-dubbo-core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <!-- Zookeeper dependencies for 3.4.x versions -->
+    <dependency>
+      <groupId>org.apache.dubbo</groupId>
+      <artifactId>dubbo-dependencies-zookeeper</artifactId>
+      <version>${dubbo.version}</version>
+      <type>pom</type>
+    </dependency>
+
+  </dependencies>
+
+  <build>
+    <plugins>
+      <!-- 使用Assembly Plugin打包并包含依赖项 -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <version>3.3.0</version>
+        <configuration>
+          <descriptors>
+            <descriptor>src/main/assembly/jar-with-dependencies.xml</descriptor>
+          </descriptors>
+          <appendAssemblyId>true</appendAssemblyId>
+        </configuration>
+        <executions>
+          <execution>
+            <id>make-assembly</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>
