@@ -2,9 +2,10 @@
 
 A plugin for Apache JMeter to test Dubbo services.
 
-[![JMeter](https://img.shields.io/badge/JMeter-5.6.3-blue)](https://jmeter.apache.org/)
-[![Dubbo](https://img.shields.io/badge/Dubbo-2.7.23-blue)](https://dubbo.apache.org/)
+[![JMeter Version](https://img.shields.io/badge/JMeter-5.6.3-blue)](https://jmeter.apache.org/)
+[![Dubbo Version](https://img.shields.io/badge/Dubbo-2.7.23-blue)](https://dubbo.apache.org/)
 [![Apache 2.0 License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![Build Status](https://github.com/solsynx/jmeter-dubbo-plugin/workflows/build/badge.svg)](https://github.com/solsynx/jmeter-dubbo-plugin/actions/workflows/build.yml)
 
 ## 代码仓库
 

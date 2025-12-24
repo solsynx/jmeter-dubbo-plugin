@@ -41,6 +41,7 @@ nbdist/
 # Maven
 target/
 !.mvn/wrapper/maven-wrapper.jar
+pom.xml.versionsBackup
 # JUnit
 test-output/
 # Other

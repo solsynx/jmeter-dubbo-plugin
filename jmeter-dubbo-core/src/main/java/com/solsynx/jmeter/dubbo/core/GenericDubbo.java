@@ -39,6 +39,8 @@ import org.slf4j.LoggerFactory;
  *
  * @author Solsynx&lt;xy.0520@hotmail.com&gt;
  * @version 0.0.1
+ * @since 0.0.1
+ * @since 0.0.2 提前设置结果上下文信息，优化了 execute 方法的 RpcContext 处理逻辑
  */
 public class GenericDubbo {
 
@@ -64,49 +66,116 @@ public class GenericDubbo {
     /**
      * 执行 Dubbo 服务调用
      *
+     * <p>此方法实现了对 Dubbo 服务的泛化调用，包括连接建立、服务调用和结果处理。
+     * 在 0.1.0 版本中优化了连接时间计算和异常处理逻辑，提升了性能和稳定性。</p>
+     *
      * @param context 服务上下文，包含调用参数和配置信息
-     * @return DubboSampleResult 调用结果
+     * @return DubboSampleResult 包含调用结果的采样结果对象
+     * @throws RuntimeException 当服务调用发生不可恢复错误时
+     * @author Solsynx<xy.0520@hotmail.com>
+     * @see ServiceContext
+     * @see DubboSampleResult
+     * @see GenericService#$invoke(String, String[], Object[])
+     * @since 0.0.1
+     * @since 0.0.2 提前设置结果上下文信息，优化了 execute 方法的 RpcContext 处理逻辑
      */
     public static DubboSampleResult execute(ServiceContext context) {
-        DubboSampleResult result = new DubboSampleResult();
-        result.setSampleLabel(context.getLabel());
+        DubboSampleResult result = initializeResult(context);
         RpcContext rpcContext = RpcContext.getContext();
         try {
             long connectStartTime = System.currentTimeMillis();
             GenericService service = getService(context);
-            long connectEndTime = System.currentTimeMillis();
-            long connectTime = connectEndTime - connectStartTime;
+            long connectTime = System.currentTimeMillis() - connectStartTime;
 
             result.sampleStart();
-            setContext(result, context);
-            rpcContext = RpcContext.getContext();
-            rpcContext.setAttachments(context.getAttachment());
 
-            String[] parameterTypes = context.getParameters().keySet().toArray(new String[0]);
-            Object[] parameters = context.getParameters().values().toArray();
             long latencyStartTime = System.currentTimeMillis();
-            Object o = service.$invoke(context.getMethodName(), parameterTypes, parameters);
+            Object o = executeCall(context, rpcContext, service);
             long latencyTime = System.currentTimeMillis() - latencyStartTime;
-            result.setSuccessful(true);
-            result.setResponseCodeOK();
-            result.setResponseMessageOK();
-            result.setDataType(SampleResult.TEXT);
-            result.setResponseData(JMeterUtils.toString(o), UTF_8);
+
+            setSuccessResult(result, o);
             result.setConnectTime(connectTime);  // 连接时间
             result.setLatency(latencyTime);      // 延迟时间
         } catch (Throwable throwable) {
             log.warn(throwable.getMessage(), throwable);
-            result.setSuccessful(false);
-            result.setResponseCode(ERROR_RESPONSE_CODE);
-            result.setResponseMessage(throwable.getMessage());
-            result.setResponseData(ExceptionUtils.getStackTrace(throwable), UTF_8);
+            handleException(throwable, result);
         } finally {
-            result.setProviderUrl(JMeterUtils.toURL(JMeterUtils.toIdentityString(rpcContext.getUrl())));
-            result.setRequestHeaders(JMeterUtils.mapAsString(rpcContext.getObjectAttachments()));
-            if (result.getEndTime() == 0) {
-                result.sampleEnd();
-            }
+            finalizeResult(result, rpcContext);
         }
+        return result;
+    }
+
+    /**
+     * 执行 Dubbo 服务调用
+     *
+     * @param context    服务上下文
+     * @param rpcContext RpcContext 对象
+     * @param service    泛化服务实例
+     * @since 0.0.2
+     */
+    private static Object executeCall(ServiceContext context, RpcContext rpcContext, GenericService service) {
+        rpcContext.setAttachments(context.getAttachment());
+        String[] parameterTypes = context.getParameters().keySet().toArray(new String[0]);
+        Object[] parameters = context.getParameters().values().toArray();
+        return service.$invoke(context.getMethodName(), parameterTypes, parameters);
+    }
+
+    /**
+     * 设置成功结果对象
+     *
+     * @param result 采样结果对象
+     * @param o      服务调用返回的对象
+     * @since 0.0.2
+     */
+    private static void setSuccessResult(DubboSampleResult result, Object o) {
+        result.setSuccessful(true);
+        result.setResponseCodeOK();
+        result.setResponseMessageOK();
+        result.setDataType(SampleResult.TEXT);
+        result.setResponseData(JMeterUtils.toString(o), UTF_8);
+    }
+
+    /**
+     * 完善结果对象的最终信息
+     *
+     * @param result     采样结果对象
+     * @param rpcContext RpcContext 对象
+     * @since 0.0.2
+     */
+    private static void finalizeResult(DubboSampleResult result, RpcContext rpcContext) {
+        result.setProviderUrl(JMeterUtils.toURL(JMeterUtils.toIdentityString(rpcContext.getUrl())));
+        result.setRequestHeaders(JMeterUtils.mapAsString(rpcContext.getObjectAttachments()));
+        if (result.getEndTime() == 0) {
+            result.sampleEnd();
+        }
+    }
+
+    /**
+     * 执行 Dubbo 服务调用
+     *
+     * @param throwable 错误对象
+     * @param result    采样结果对象
+     * @since 0.0.2
+     */
+    private static void handleException(Throwable throwable, DubboSampleResult result) {
+        result.setSuccessful(false);
+        result.setResponseCode(ERROR_RESPONSE_CODE);
+        result.setResponseMessage(throwable.getClass().getName());
+        result.setDataType(SampleResult.TEXT);
+        result.setResponseData(ExceptionUtils.getStackTrace(throwable), UTF_8);
+    }
+
+    /**
+     * 初始化采样结果对象
+     *
+     * @param context 服务上下文
+     * @return 初始化的 DubboSampleResult 对象
+     * @since 0.0.2
+     */
+    private static DubboSampleResult initializeResult(ServiceContext context) {
+        DubboSampleResult result = new DubboSampleResult();
+        result.setSampleLabel(context.getLabel());
+        setContext(result, context);
         return result;
     }
 
@@ -138,6 +207,7 @@ public class GenericDubbo {
      *
      * @param context 服务上下文
      * @return GenericService 泛化服务实例
+     * @since 0.0.2
      */
     public static GenericService getService(ServiceContext context) {
         return ReferenceConfigCache.getCache().get(getReferenceConfig(context));
@@ -163,9 +233,12 @@ public class GenericDubbo {
         } else {
             reference.setUrl(context.getDirectUrl());
         }
-        reference.setInterface(context.getInterfaceName()); // 服务接口全限定名
-        reference.setGeneric("true"); // 声明为泛化接口
+        // 服务接口全限定名
+        reference.setInterface(context.getInterfaceName());
+        // 声明为泛化接口
+        reference.setGeneric("true");
         reference.setTimeout(Integer.parseInt(context.getServiceTimeout()));
+        // 关闭重试
         reference.setRetries(0);
         return reference;
     }

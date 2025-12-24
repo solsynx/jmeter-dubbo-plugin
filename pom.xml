@@ -7,7 +7,7 @@
 
   <groupId>com.solsynx</groupId>
   <artifactId>jmeter-dubbo-plugin</artifactId>
-  <version>0.0.1</version>
+  <version>0.0.2</version>
   <packaging>pom</packaging>
   <name>JMeter Dubbo Plugin</name>
   <description>A plugin for Apache JMeter to test Dubbo Services</description>
