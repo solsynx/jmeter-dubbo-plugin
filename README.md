@@ -9,9 +9,11 @@ A plugin for Apache JMeter to test Dubbo services.
 
 ## 代码仓库
 
-[![Gitee](https://img.shields.io/badge/gitee-repo-blue?logo=gitee)](https://gitee.com/solsynx/jmeter-dubbo-plugin)
-[![GitHub](https://img.shields.io/badge/github-repo-blue?logo=github)](https://github.com/solsynx/jmeter-dubbo-plugin)
-[![GitCode](https://img.shields.io/badge/gitcode-repo-blue?logo=gitcode)](https://gitcode.com/solsynx/jmeter-dubbo-plugin)
+| 平台 | 仓库 | 版本                                                                                                                                                                   |
+|------|----|----------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **GitHub** |[![GitHub](https://img.shields.io/badge/github-repo-blue?logo=github)](https://github.com/solsynx/jmeter-dubbo-plugin) | [![GitHub Release](https://img.shields.io/github/v/release/solsynx/jmeter-dubbo-plugin?logo=github)](https://github.com/solsynx/jmeter-dubbo-plugin/releases/latest) |
+| **Gitee** |[![Gitee](https://img.shields.io/badge/gitee-repo-blue?logo=gitee)](https://gitee.com/solsynx/jmeter-dubbo-plugin)| [![Gitee Release](https://img.shields.io/badge/gitee-release-blue?logo=gitee)](https://gitee.com/solsynx/jmeter-dubbo-plugin/releases/latest)  |
+| **GitCode** |[![GitCode](https://img.shields.io/badge/gitcode-repo-blue?logo=gitcode)](https://gitcode.com/solsynx/jmeter-dubbo-plugin)| [![GitCode Release](https://img.shields.io/badge/gitcode-release-blue?logo=gitcode)](https://gitcode.com/solsynx/jmeter-dubbo-plugin/releases) |
 
 
 ## 简介

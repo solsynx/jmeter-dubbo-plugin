@@ -236,7 +236,7 @@ public class GenericDubbo {
         // 服务接口全限定名
         reference.setInterface(context.getInterfaceName());
         // 声明为泛化接口
-        reference.setGeneric("true");
+        reference.setGeneric("gson");
         reference.setTimeout(Integer.parseInt(context.getServiceTimeout()));
         // 关闭重试
         reference.setRetries(0);
