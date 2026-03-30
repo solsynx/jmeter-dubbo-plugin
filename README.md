@@ -36,6 +36,34 @@ JMeter Dubbo Plugin 是一个用于在 Apache JMeter 中测试 Dubbo 服务的�
 
 ![Dubbo Sampler界面](docs/images/sampler.png)
 
+## 版本历史
+
+### v0.0.3
+
+#### Features
+
+- 默认启用Gson
+- 优化Parameters和Attachment界面效果
+
+### v0.0.2
+
+#### Features
+- 添加 ZooKeeper 注册中心支持模块
+- 实现 Dubbo 泛化调用功能
+- 提供完整的 GUI 配置界面
+- 支持多种注册中心配置选项
+- 支持服务直连模式
+- 支持 Attachment 和方法参数配置
+- 提供中英文国际化支持
+
+### v0.0.1
+
+#### Features
+- 初始版本发布
+- 基础 Dubbo Sampler 实现
+- 核心功能框架搭建
+
+
 ## 项目结构
 
 本项目采用多模块结构：
