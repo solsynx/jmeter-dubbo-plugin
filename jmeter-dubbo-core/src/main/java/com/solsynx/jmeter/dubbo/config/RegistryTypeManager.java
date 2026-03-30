@@ -17,6 +17,7 @@
 
 package com.solsynx.jmeter.dubbo.config;
 
+import java.lang.ref.WeakReference;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.ServiceLoader;
@@ -36,7 +37,7 @@ public class RegistryTypeManager {
 
     private static final Logger log = LoggerFactory.getLogger(RegistryTypeManager.class);
 
-    private static final Set<RegistryTypeProvider> PROVIDERS = loadProviders();
+    private static final Set<WeakReference<RegistryTypeProvider>> PROVIDERS = loadProviders();
 
     /**
      * 私有构造函数，防止实例化
@@ -52,53 +53,41 @@ public class RegistryTypeManager {
      */
     public static Set<String> getSupportedTypes() {
         Set<String> types = new HashSet<>();
-        for (RegistryTypeProvider provider : PROVIDERS) {
-            types.addAll(provider.getSupportedTypes());
+        for (WeakReference<RegistryTypeProvider> providerRef : PROVIDERS) {
+            RegistryTypeProvider provider = providerRef.get();
+            if (provider != null) {
+                types.addAll(provider.getSupportedTypes());
+            }
         }
         return Collections.unmodifiableSet(types);
     }
 
-    /**
-     * 获取指定注册中心类型的默认值
-     *
-     * @param type 注册中心类型
-     * @return 包含默认值的 RegistryDefaults 对象，如果类型不支持则返回 null
-     */
     public static RegistryTypeProvider.RegistryDefaults getDefaults(String type) {
-        for (RegistryTypeProvider provider : PROVIDERS) {
-            if (provider.isSupported(type)) {
+        for (WeakReference<RegistryTypeProvider> providerRef : PROVIDERS) {
+            RegistryTypeProvider provider = providerRef.get();
+            if (provider != null && provider.isSupported(type)) {
                 return provider.getDefaults(type);
             }
         }
         return null;
     }
 
-    /**
-     * 检查注册中心类型是否被支持
-     *
-     * @param type 注册中心类型
-     * @return 如果支持则返回 true，否则返回 false
-     */
     public static boolean isSupported(String type) {
-        for (RegistryTypeProvider provider : PROVIDERS) {
-            if (provider.isSupported(type)) {
+        for (WeakReference<RegistryTypeProvider> providerRef : PROVIDERS) {
+            RegistryTypeProvider provider = providerRef.get();
+            if (provider != null && provider.isSupported(type)) {
                 return true;
             }
         }
         return false;
     }
 
-    /**
-     * 通过 SPI 加载注册中心类型提供者
-     *
-     * @return 注册中心类型提供者的集合
-     */
-    private static Set<RegistryTypeProvider> loadProviders() {
-        Set<RegistryTypeProvider> providers = new HashSet<>();
+    private static Set<WeakReference<RegistryTypeProvider>> loadProviders() {
+        Set<WeakReference<RegistryTypeProvider>> providers = new HashSet<>();
 
         ServiceLoader<RegistryTypeProvider> loader = ServiceLoader.load(RegistryTypeProvider.class);
         for (RegistryTypeProvider provider : loader) {
-            providers.add(provider);
+            providers.add(new WeakReference<>(provider));
             log.info("Loaded registry type provider: {}", provider.getClass().getName());
         }
 

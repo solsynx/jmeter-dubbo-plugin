@@ -55,6 +55,9 @@ public class DubboSampler extends AbstractSampler implements Serializable {
     private static final String ATTACHMENT = "DubboSampler.attachment";
     private static final String PARAMETERS = "DubboSampler.parameters";
 
+    // 缓存的空 Arguments 对象，避免重复创建
+    private static final Arguments EMPTY_ARGUMENTS = new Arguments();
+
     static {
         JMeterUtils.registerConverters();
     }
@@ -284,7 +287,7 @@ public class DubboSampler extends AbstractSampler implements Serializable {
     public Arguments getAttachment() {
         JMeterProperty property = getProperty(ATTACHMENT);
         if (property instanceof NullProperty) {
-            return new Arguments();
+            return EMPTY_ARGUMENTS;
         }
         return (Arguments) property.getObjectValue();
     }
@@ -306,7 +309,7 @@ public class DubboSampler extends AbstractSampler implements Serializable {
     public Arguments getParameters() {
         JMeterProperty property = getProperty(PARAMETERS);
         if (property instanceof NullProperty) {
-            return new Arguments();
+            return EMPTY_ARGUMENTS;
         }
         return (Arguments) property.getObjectValue();
     }

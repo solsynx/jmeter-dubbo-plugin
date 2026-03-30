@@ -22,7 +22,6 @@ import com.solsynx.jmeter.dubbo.config.RegistryTypeProvider;
 import com.solsynx.jmeter.dubbo.sampler.DubboSampler;
 import com.solsynx.jmeter.dubbo.utils.JMeterUtils;
 import org.apache.jmeter.config.Arguments;
-import org.apache.jmeter.config.gui.ArgumentsPanel;
 import org.apache.jmeter.gui.util.HorizontalPanel;
 import org.apache.jmeter.gui.util.VerticalPanel;
 import org.apache.jmeter.samplers.gui.AbstractSamplerGui;
@@ -62,12 +61,10 @@ public class DubboSamplerGui extends AbstractSamplerGui implements ActionListene
     private JLabeledTextField serviceTimeoutField;
 
     // Attachment panel
-    private ArgumentsPanel attachmentPanel;
-    private Arguments attachments;
+    private DubboArgumentsPanel attachmentPanel;
 
     // Parameters panel
-    private ArgumentsPanel parametersPanel;
-    private Arguments parameters;
+    private DubboArgumentsPanel parametersPanel;
 
     /**
      * 构造函数，创建一个新的 DubboSamplerGui 实例
@@ -115,32 +112,56 @@ public class DubboSamplerGui extends AbstractSamplerGui implements ActionListene
 
         if (element instanceof DubboSampler) {
             DubboSampler sampler = (DubboSampler) element;
-
-            // Registry configuration
-            sampler.setRegistryType(registryTypeChoice.getText());
-            sampler.setRegistryAddress(registryAddressField.getText());
-            sampler.setRegistryGroup(registryGroupField.getText());
-            sampler.setRegistryTimeout(registryTimeoutField.getText());
-            sampler.setRegistryUsername(registryUsernameField.getText());
-            sampler.setRegistryPassword(registryPasswordField.getText());
-
-            // Service configuration
-            sampler.setDirectUrl(directUrlField.getText());
-            sampler.setServiceGroup(serviceGroupField.getText());
-            sampler.setInterfaceName(interfaceNameField.getText());
-            sampler.setMethodName(methodNameField.getText());
-            sampler.setServiceTimeout(serviceTimeoutField.getText());
-
-            // Attachment configuration
-            attachmentPanel.modifyTestElement(attachments);
-            sampler.setAttachment(attachments);
-
-            // Parameters configuration
-            parametersPanel.modifyTestElement(parameters);
-            sampler.setParameters(parameters);
+            // 在 EDT 线程中执行修改操作
+            if (SwingUtilities.isEventDispatchThread()) {
+                updateSamplerFromGui(sampler);
+            } else {
+                try {
+                    SwingUtilities.invokeAndWait(() -> updateSamplerFromGui(sampler));
+                } catch (Exception e) {
+                    throw new RuntimeException("Failed to update sampler from GUI", e);
+                }
+            }
         }
     }
 
+    private void updateSamplerFromGui(DubboSampler sampler) {
+        // Registry configuration
+        sampler.setRegistryType(getSafeText(registryTypeChoice));
+        sampler.setRegistryAddress(getSafeText(registryAddressField));
+        sampler.setRegistryGroup(getSafeText(registryGroupField));
+        sampler.setRegistryTimeout(getSafeText(registryTimeoutField));
+        sampler.setRegistryUsername(getSafeText(registryUsernameField));
+        sampler.setRegistryPassword(getSafeText(registryPasswordField));
+
+        // Service configuration
+        sampler.setDirectUrl(getSafeText(directUrlField));
+        sampler.setServiceGroup(getSafeText(serviceGroupField));
+        sampler.setInterfaceName(getSafeText(interfaceNameField));
+        sampler.setMethodName(getSafeText(methodNameField));
+        sampler.setServiceTimeout(getSafeText(serviceTimeoutField));
+
+        sampler.setAttachment(attachmentPanel.getArguments());
+        sampler.setParameters(parametersPanel.getArguments());
+    }
+
+    /**
+     * 安全获取文本内容，避免 null 值
+     * @param field JLabeledTextField
+     * @return 安全的字符串
+     */
+    private String getSafeText(JLabeledTextField field) {
+        return field != null ? field.getText() : "";
+    }
+
+    /**
+     * 安全获取文本内容，避免 null 值
+     * @param choice JLabeledChoice
+     * @return 安全的字符串
+     */
+    private String getSafeText(JLabeledChoice choice) {
+        return choice != null ? choice.getText() : "";
+    }
     /**
      * 配置测试元素
      * @param element 要配置的测试元素
@@ -169,13 +190,13 @@ public class DubboSamplerGui extends AbstractSamplerGui implements ActionListene
             // Attachment configuration
             Arguments args = sampler.getAttachment();
             if (args != null) {
-                attachmentPanel.configure(args);
+                attachmentPanel.setArguments(args);
             }
 
             // Parameters configuration
             Arguments params = sampler.getParameters();
             if (params != null) {
-                parametersPanel.configure(params);
+                parametersPanel.setArguments(params);
             }
         }
     }
@@ -195,6 +216,12 @@ public class DubboSamplerGui extends AbstractSamplerGui implements ActionListene
 
             // Set default values based on registry type
             updateRegistryDefaults(defaultType);
+        }else{
+            // 当没有可用的注册中心类型时，清空相关字段
+            registryTypeChoice.setText("");
+            registryAddressField.setText("");
+            registryGroupField.setText("");
+            registryTimeoutField.setText("");
         }
 
         registryUsernameField.setText("");
@@ -208,10 +235,10 @@ public class DubboSamplerGui extends AbstractSamplerGui implements ActionListene
         serviceTimeoutField.setText("1000");
 
         // Attachment configuration defaults
-        attachmentPanel.clearGui();
+        attachmentPanel.clearData();
 
         // Parameters configuration defaults
-        parametersPanel.clearGui();
+        parametersPanel.clearData();
     }
 
     /**
@@ -220,6 +247,13 @@ public class DubboSamplerGui extends AbstractSamplerGui implements ActionListene
      * @param type 注册中心类型
      */
     private void updateRegistryDefaults(String type) {
+        if (type == null || type.trim().isEmpty()) {
+            registryAddressField.setText("");
+            registryGroupField.setText("");
+            registryTimeoutField.setText("");
+            return;
+        }
+
         RegistryTypeProvider.RegistryDefaults defaults = RegistryTypeManager.getDefaults(type);
         if (defaults != null) {
             registryAddressField.setText(defaults.getDefaultAddress());
@@ -331,14 +365,15 @@ public class DubboSamplerGui extends AbstractSamplerGui implements ActionListene
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBorder(BorderFactory.createTitledBorder(JMeterUtils.getResString("attachment.displayName")));
 
-        attachments = new Arguments();
-        attachmentPanel = new ArgumentsPanel(JMeterUtils.getResString("attachment.displayName"), null, true, false,
-                                             null,
-                                             false, null);
 
-        // Control the height of the ArgumentsPanel
-        Dimension prefSize = new Dimension(attachmentPanel.getPreferredSize().width, 200);
+        // Create DubboArgumentsPanel with custom headers for attachment
+        attachmentPanel = new DubboArgumentsPanel(new String[]{"attachment.name", "attachment.value", "attachment.description"});
+
+        // Control the height of the DubboArgumentsPanel
+        Dimension prefSize = new Dimension( (int) (300 * getScaleX()),
+                                            (int) (180 * getScaleY()));
         attachmentPanel.setPreferredSize(prefSize);
+        attachmentPanel.setMinimumSize(new Dimension(300, 180));
 
         panel.add(attachmentPanel, BorderLayout.CENTER);
 
@@ -346,21 +381,43 @@ public class DubboSamplerGui extends AbstractSamplerGui implements ActionListene
     }
 
     /**
+     * 获取 X 轴缩放比例
+     * @return X 轴缩放比例
+     */
+    private double getScaleX() {
+        GraphicsConfiguration gc = getGraphicsConfiguration();
+        if (gc != null) {
+            return gc.getDefaultTransform().getScaleX();
+        }
+        return 1.0;
+    }
+
+    /**
+     * 获取 Y 轴缩放比例
+     * @return Y 轴缩放比例
+     */
+    private double getScaleY() {
+        GraphicsConfiguration gc = getGraphicsConfiguration();
+        if (gc != null) {
+            return gc.getDefaultTransform().getScaleY();
+        }
+        return 1.0;
+    }
+    /**
      * 创建参数配置面板
      * @return 参数配置面板
      */
     private JPanel createParametersPanel() {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBorder(BorderFactory.createTitledBorder(JMeterUtils.getResString("parameters.displayName")));
+        // Create DubboArgumentsPanel with custom headers for parameters
+        parametersPanel = new DubboArgumentsPanel(new String[]{"parameters.name", "parameters.value", "parameters.description"});
 
-        parameters = new Arguments();
-        parametersPanel = new ArgumentsPanel(JMeterUtils.getResString("parameters.displayName"), null, true, false,
-                                             null,
-                                             false, null);
-
-        // Control the height of the ArgumentsPanel
-        Dimension prefSize = new Dimension(parametersPanel.getPreferredSize().width, 250);
+        // Control the height of the DubboArgumentsPanel
+        Dimension prefSize = new Dimension((int) (300 * getScaleX()),
+                                           (int) (230 * getScaleY()));
         parametersPanel.setPreferredSize(prefSize);
+        parametersPanel.setMinimumSize(new Dimension(300, 230));
         panel.add(parametersPanel, BorderLayout.CENTER);
         return panel;
     }
@@ -371,7 +428,7 @@ public class DubboSamplerGui extends AbstractSamplerGui implements ActionListene
      */
     @Override
     public void actionPerformed(ActionEvent e) {
-        // No action needed as ArgumentsPanel handles its own events
+        // No action needed as DubboArgumentsPanel handles its own events
     }
 
     /**

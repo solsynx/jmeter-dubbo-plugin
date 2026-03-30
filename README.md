@@ -9,9 +9,11 @@ A plugin for Apache JMeter to test Dubbo services.
 
 ## 代码仓库
 
-[![Gitee](https://img.shields.io/badge/gitee-repo-blue?logo=gitee)](https://gitee.com/solsynx/jmeter-dubbo-plugin)
-[![GitHub](https://img.shields.io/badge/github-repo-blue?logo=github)](https://github.com/solsynx/jmeter-dubbo-plugin)
-[![GitCode](https://img.shields.io/badge/gitcode-repo-blue?logo=gitcode)](https://gitcode.com/solsynx/jmeter-dubbo-plugin)
+| 平台 | 仓库 | 版本                                                                                                                                                                   |
+|------|----|----------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **GitHub** |[![GitHub](https://img.shields.io/badge/github-repo-blue?logo=github)](https://github.com/solsynx/jmeter-dubbo-plugin) | [![GitHub Release](https://img.shields.io/github/v/release/solsynx/jmeter-dubbo-plugin?logo=github)](https://github.com/solsynx/jmeter-dubbo-plugin/releases/latest) |
+| **Gitee** |[![Gitee](https://img.shields.io/badge/gitee-repo-blue?logo=gitee)](https://gitee.com/solsynx/jmeter-dubbo-plugin)| [![Gitee Release](https://img.shields.io/badge/gitee-release-blue?logo=gitee)](https://gitee.com/solsynx/jmeter-dubbo-plugin/releases/latest)  |
+| **GitCode** |[![GitCode](https://img.shields.io/badge/gitcode-repo-blue?logo=gitcode)](https://gitcode.com/solsynx/jmeter-dubbo-plugin)| [![GitCode Release](https://img.shields.io/badge/gitcode-release-blue?logo=gitcode)](https://gitcode.com/solsynx/jmeter-dubbo-plugin/releases) |
 
 
 ## 简介
@@ -33,6 +35,34 @@ JMeter Dubbo Plugin 是一个用于在 Apache JMeter 中测试 Dubbo 服务的�
 ## 效果展示
 
 ![Dubbo Sampler界面](docs/images/sampler.png)
+
+## 版本历史
+
+### v0.0.3
+
+#### Features
+
+- 默认启用Gson
+- 优化Parameters和Attachment界面效果
+
+### v0.0.2
+
+#### Features
+- 添加 ZooKeeper 注册中心支持模块
+- 实现 Dubbo 泛化调用功能
+- 提供完整的 GUI 配置界面
+- 支持多种注册中心配置选项
+- 支持服务直连模式
+- 支持 Attachment 和方法参数配置
+- 提供中英文国际化支持
+
+### v0.0.1
+
+#### Features
+- 初始版本发布
+- 基础 Dubbo Sampler 实现
+- 核心功能框架搭建
+
 
 ## 项目结构
 
