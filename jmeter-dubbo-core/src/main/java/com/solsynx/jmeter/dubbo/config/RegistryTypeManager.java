@@ -17,14 +17,13 @@
 
 package com.solsynx.jmeter.dubbo.config;
 
-import java.lang.ref.WeakReference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.ServiceLoader;
 import java.util.Set;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * 注册中心类型管理器
@@ -37,7 +36,7 @@ public class RegistryTypeManager {
 
     private static final Logger log = LoggerFactory.getLogger(RegistryTypeManager.class);
 
-    private static final Set<WeakReference<RegistryTypeProvider>> PROVIDERS = loadProviders();
+    private static final Set<RegistryTypeProvider> PROVIDERS = loadProviders();
 
     /**
      * 私有构造函数，防止实例化
@@ -53,8 +52,7 @@ public class RegistryTypeManager {
      */
     public static Set<String> getSupportedTypes() {
         Set<String> types = new HashSet<>();
-        for (WeakReference<RegistryTypeProvider> providerRef : PROVIDERS) {
-            RegistryTypeProvider provider = providerRef.get();
+        for (RegistryTypeProvider provider : PROVIDERS) {
             if (provider != null) {
                 types.addAll(provider.getSupportedTypes());
             }
@@ -63,8 +61,7 @@ public class RegistryTypeManager {
     }
 
     public static RegistryTypeProvider.RegistryDefaults getDefaults(String type) {
-        for (WeakReference<RegistryTypeProvider> providerRef : PROVIDERS) {
-            RegistryTypeProvider provider = providerRef.get();
+        for (RegistryTypeProvider provider : PROVIDERS) {
             if (provider != null && provider.isSupported(type)) {
                 return provider.getDefaults(type);
             }
@@ -72,22 +69,12 @@ public class RegistryTypeManager {
         return null;
     }
 
-    public static boolean isSupported(String type) {
-        for (WeakReference<RegistryTypeProvider> providerRef : PROVIDERS) {
-            RegistryTypeProvider provider = providerRef.get();
-            if (provider != null && provider.isSupported(type)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private static Set<WeakReference<RegistryTypeProvider>> loadProviders() {
-        Set<WeakReference<RegistryTypeProvider>> providers = new HashSet<>();
+    private static Set<RegistryTypeProvider> loadProviders() {
+        Set<RegistryTypeProvider> providers = new HashSet<>();
 
         ServiceLoader<RegistryTypeProvider> loader = ServiceLoader.load(RegistryTypeProvider.class);
         for (RegistryTypeProvider provider : loader) {
-            providers.add(new WeakReference<>(provider));
+            providers.add(provider);
             log.info("Loaded registry type provider: {}", provider.getClass().getName());
         }
 
