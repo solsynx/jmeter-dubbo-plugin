@@ -1,0 +1,26 @@
+# 主题
+theme: jekyll-theme-cayman
+
+# 网站信息
+title: jmeter-dubbo-plugin
+description: JMeter Dubbo 插件使用文档
+
+# 右上角跳转 GitHub 仓库
+github_url: https://github.com/solsynx/jmeter-dubbo-plugin
+
+# 关键：自定义域名根路径，不需要带仓库名
+baseurl: ""
+url: "https://jmeter-dubbo-plugin.solsynx.com"
+
+# 以 README 作为首页
+readme_index: true
+
+# 相对链接支持
+plugins:
+  - jekyll-relative-links
+relative_links:
+  enabled: true
+  collections: true
+
+# 关闭下载按钮
+show_downloads: false

@@ -86,10 +86,27 @@ public class JMeterUtils {
      * @return 参数映射表
      */
     public static Map<String, String> toMap(Arguments args) {
-        if (args == null) {
+        if (args == null || args.getArgumentCount() == 0) {
             return new LinkedHashMap<>();
         }
         return args.getArgumentsAsMap();
+    }
+
+    /**
+     * 将 Arguments 转换为 Map
+     *
+     * @param args Arguments 对象，可以为 null
+     * @return 参数映射表
+     */
+    public static Map<String, String> toMapWithOrder(Arguments args) {
+        Map<String, String> map = new LinkedHashMap<>();
+        if (args == null || args.getArgumentCount() == 0) {
+            return map;
+        }
+        for (int i = 0; i < args.getArgumentCount(); i++) {
+            map.put(args.getArgument(i).getName() + "#" + i, args.getArgument(i).getValue());
+        }
+        return map;
     }
 
     /**

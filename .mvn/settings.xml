@@ -2,22 +2,6 @@
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0
                               http://maven.apache.org/xsd/settings-1.0.0.xsd">
-    <mirrors>
-        <mirror>
-            <id>aliyunmaven</id>
-            <mirrorOf>central</mirrorOf>
-            <name>阿里云公共仓库</name>
-            <url>https://maven.aliyun.com/repository/central</url>
-        </mirror>
-        
-        <mirror>
-            <id>aliyunmaven-apache</id>
-            <mirrorOf>apache snapshots,apache releases</mirrorOf>
-            <name>阿里云Apache仓库</name>
-            <url>https://maven.aliyun.com/repository/apache-snapshots</url>
-        </mirror>
-    </mirrors>
-
     <profiles>
         <profile>
             <id>aliyun-repo</id>
@@ -33,7 +17,7 @@
                         <enabled>false</enabled>
                     </snapshots>
                 </repository>
-                
+
                 <repository>
                     <id>apache-releases</id>
                     <name>aliyun apache releases</name>
@@ -45,7 +29,7 @@
                         <enabled>false</enabled>
                     </snapshots>
                 </repository>
-                
+
                 <repository>
                     <id>apache-snapshots</id>
                     <name>aliyun apache snapshots</name>
@@ -58,7 +42,7 @@
                     </snapshots>
                 </repository>
             </repositories>
-            
+
             <pluginRepositories>
                 <pluginRepository>
                     <id>central</id>
@@ -74,8 +58,4 @@
             </pluginRepositories>
         </profile>
     </profiles>
-    
-    <activeProfiles>
-        <activeProfile>aliyun-repo</activeProfile>
-    </activeProfiles>
 </settings>

@@ -18,9 +18,7 @@
 package com.solsynx.jmeter.dubbo.context;
 
 import com.solsynx.jmeter.dubbo.sampler.DubboSampler;
-import com.solsynx.jmeter.dubbo.utils.JMeterUtils;
-
-import java.util.Map;
+import org.apache.jmeter.config.Arguments;
 
 /**
  * 服务上下文类
@@ -45,8 +43,8 @@ public class ServiceContext {
     private String interfaceName;
     private String methodName;
     private String serviceTimeout;
-    private Map<String, String> attachment;
-    private Map<String, String> parameters;
+    private Arguments attachment;
+    private Arguments parameters;
 
     /**
      * 默认构造函数
@@ -71,8 +69,8 @@ public class ServiceContext {
         interfaceName = sampler.getInterfaceName();
         methodName = sampler.getMethodName();
         serviceTimeout = sampler.getServiceTimeout();
-        attachment = JMeterUtils.toMap(sampler.getAttachment());
-        parameters = JMeterUtils.toMap(sampler.getParameters());
+        attachment = sampler.getAttachment();
+        parameters = sampler.getParameters();
     }
 
 
@@ -296,7 +294,7 @@ public class ServiceContext {
      * 获取附件参数
      * @return 附件参数映射表
      */
-    public Map<String, String> getAttachment() {
+    public Arguments getAttachment() {
         return attachment;
     }
 
@@ -305,7 +303,7 @@ public class ServiceContext {
      * @param attachment 附件参数映射表
      * @return 当前服务上下文实例
      */
-    public ServiceContext setAttachment(Map<String, String> attachment) {
+    public ServiceContext setAttachment(Arguments attachment) {
         this.attachment = attachment;
         return this;
     }
@@ -314,7 +312,7 @@ public class ServiceContext {
      * 获取方法参数
      * @return 方法参数映射表
      */
-    public Map<String, String> getParameters() {
+    public Arguments getParameters() {
         return parameters;
     }
 
@@ -323,7 +321,7 @@ public class ServiceContext {
      * @param parameters 方法参数映射表
      * @return 当前服务上下文实例
      */
-    public ServiceContext setParameters(Map<String, String> parameters) {
+    public ServiceContext setParameters(Arguments parameters) {
         this.parameters = parameters;
         return this;
     }

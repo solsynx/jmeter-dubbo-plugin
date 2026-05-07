@@ -17,6 +17,7 @@
 
 package com.solsynx.jmeter.dubbo.core;
 
+import com.alibaba.fastjson.JSON;
 import com.solsynx.jmeter.dubbo.DubboSampleResult;
 import com.solsynx.jmeter.dubbo.context.ServiceContext;
 import com.solsynx.jmeter.dubbo.utils.JMeterUtils;
@@ -29,6 +30,7 @@ import org.apache.dubbo.config.utils.ReferenceConfigCache;
 import org.apache.dubbo.rpc.RpcContext;
 import org.apache.dubbo.rpc.model.ApplicationModel;
 import org.apache.dubbo.rpc.service.GenericService;
+import org.apache.jmeter.config.Arguments;
 import org.apache.jmeter.samplers.SampleResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -114,12 +116,77 @@ public class GenericDubbo {
      * @since 0.0.2
      */
     private static Object executeCall(ServiceContext context, RpcContext rpcContext, GenericService service) {
-        rpcContext.setAttachments(context.getAttachment());
-        String[] parameterTypes = context.getParameters().keySet().toArray(new String[0]);
-        Object[] parameters = context.getParameters().values().toArray();
+        rpcContext.setAttachments(JMeterUtils.toMap(context.getAttachment()));
+        String[] parameterTypes = getParameterTypes(context.getParameters());
+        Object[] parameters = getParameters(context.getParameters());
         return service.$invoke(context.getMethodName(), parameterTypes, parameters);
     }
 
+
+    private static String[] getParameterTypes(Arguments arguments) {
+        if (arguments == null || arguments.getArgumentCount() == 0) {
+            return new String[0];
+        }
+        String[] parameterTypes = new String[arguments.getArgumentCount()];
+        for (int i = 0; i < arguments.getArgumentCount(); i++) {
+            parameterTypes[i] = arguments.getArgument(i).getName();
+        }
+        return parameterTypes;
+    }
+
+    private static Object[] getParameters(Arguments arguments) {
+        if (arguments == null || arguments.getArgumentCount() == 0) {
+            return new Object[0];
+        }
+        Object[] parameters = new Object[arguments.getArgumentCount()];
+        for (int i = 0; i < arguments.getArgumentCount(); i++) {
+            parameters[i] = adaptParam(arguments.getArgument(i).getValue());
+        }
+        return parameters;
+    }
+    /**
+     * 动态适配 Dubbo gson 泛化调用参数
+     * 自动处理：JSON字符串、Map、Java对象 → 安全适配
+     */
+    public static Object adaptParam(Object param) {
+        if (param == null) {
+            return null;
+        }
+        // 只处理字符串，其他类型直接返回
+        if (param instanceof String) {
+            String jsonStr = (String) param;
+
+            // ==============================================
+            // 关键修复：如果是【纯数字字符串】，直接返回 String，不解析！
+            // ==============================================
+            if (isNumeric(jsonStr)) {
+                return jsonStr; // 直接返回字符串 "123"，不转成数字
+            }
+
+            // 尝试解析 JSON 对象（{} 或 []）
+            try {
+                if (jsonStr.startsWith("{") || jsonStr.startsWith("[")) {
+                    return JSON.parse(jsonStr);
+                }
+            } catch (Exception ignored) {}
+
+            // 普通字符串，直接返回
+            return jsonStr;
+        }
+
+
+        // 非字符串类型（Map/对象）直接返回
+        return param;
+    }
+    /**
+     * 判断字符串是否是纯数字（整数/小数都支持）
+     */
+    private static boolean isNumeric(String str) {
+        if (str == null || str.isEmpty()) {
+            return false;
+        }
+        return str.matches("-?\\d+(\\.\\d+)?");
+    }
     /**
      * 设置成功结果对象
      *
@@ -199,7 +266,7 @@ public class GenericDubbo {
         result.setInterfaceName(context.getInterfaceName());
         result.setMethodName(context.getMethodName());
         result.setServiceGroup(context.getServiceGroup());
-        result.setParameters(context.getParameters());
+        result.setParameters(JMeterUtils.toMapWithOrder(context.getParameters()));
     }
 
     /**

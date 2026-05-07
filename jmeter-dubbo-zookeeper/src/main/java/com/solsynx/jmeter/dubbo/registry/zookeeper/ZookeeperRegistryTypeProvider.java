@@ -62,9 +62,9 @@ public class ZookeeperRegistryTypeProvider implements RegistryTypeProvider {
      * @return 包含默认值的 RegistryDefaults 对象
      */
     @Override
-    public RegistryTypeProvider.RegistryDefaults getDefaults(String type) {
+    public RegistryDefaults getDefaults(String type) {
         if (isSupported(type)) {
-            return new RegistryTypeProvider.RegistryDefaults("localhost:2181", "dubbo", "3000");
+            return new RegistryDefaults("localhost:2181", "dubbo", "3000");
         }
         return null;
     }

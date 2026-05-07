@@ -38,6 +38,26 @@ JMeter Dubbo Plugin 是一个用于在 Apache JMeter 中测试 Dubbo 服务的�
 
 ## 版本历史
 
+### v0.0.5
+
+#### Bug Fixes
+
+- **修复参数类型丢失问题**：重构 `getParameterTypes` 和 `getParameters` 方法，直接从 Arguments 按索引获取参数，避免使用 `getArgumentsAsMap()` 导致的同名 key 覆盖问题
+- **修复数字字符串解析问题**：新增 `adaptParam` 方法智能识别纯数字字符串，防止 "123" 等数字字符串被错误解析为数值类型
+- **修复参数顺序问题**：新增 `toMapWithOrder` 方法，通过添加索引后缀保持参数顺序，解决结果展示时参数顺序混乱的问题
+
+#### Features
+
+- 优化泛化调用参数处理机制，支持相同类型的多个参数正确传递
+- 增强 Attachment 附件参数的安全处理，使用 `toMap` 方法进行空值检查
+- 改进 JSON 对象自动识别功能，支持 `{}` 和 `[]` 格式的字符串自动解析
+
+#### Improvements
+
+- 重构 GenericDubbo 参数处理方法，提取独立的 `getParameterTypes` 和 `getParameters` 方法
+- 优化 JMeterUtils 工具类，增强 Arguments 到 Map 转换的空值和空集合检查
+- 改进代码结构，提升参数处理逻辑的可读性和可维护性
+
 ### v0.0.4
 
 #### Features

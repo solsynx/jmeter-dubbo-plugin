@@ -47,3 +47,4 @@ test-output/
 # Other
 *.swp
 *.bak
+!/jmeter.log

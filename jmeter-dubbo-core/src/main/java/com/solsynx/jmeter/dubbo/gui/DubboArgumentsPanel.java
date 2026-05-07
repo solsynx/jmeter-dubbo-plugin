@@ -196,7 +196,10 @@ public class DubboArgumentsPanel extends JPanel implements ActionListener {
 
         // 更新表格中的数据
         if (dialog.isConfirmed()) {
-            model.setValueAt(dialog.getArgument(), selectedRow, 0);
+            Argument updatedArg = dialog.getArgument();
+            model.setValueAt(updatedArg.getName(), selectedRow, 0);
+            model.setValueAt(updatedArg.getValue(), selectedRow, 1);
+            model.setValueAt(updatedArg.getDescription(), selectedRow, 2);
         }
     }
 
