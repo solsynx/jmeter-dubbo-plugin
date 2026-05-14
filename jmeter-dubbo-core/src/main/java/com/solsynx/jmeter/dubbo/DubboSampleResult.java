@@ -32,7 +32,7 @@ import java.util.Map;
  */
 public class DubboSampleResult extends SampleResult {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 3665460320365957559L;
 
     private String registryCenter;
     private String registryGroup;
@@ -186,7 +186,7 @@ public class DubboSampleResult extends SampleResult {
     @Override
     public String getSamplerData() {
         return String.join("\n",
-                           "RregistryCenter: ".concat(JMeterUtils.defaultValue(registryCenter)),
+                           "RegistryCenter: ".concat(JMeterUtils.defaultValue(registryCenter)),
                            "RegistryGroup: ".concat(JMeterUtils.defaultValue(registryGroup)),
                            "DirectUrl: ".concat(JMeterUtils.defaultValue(JMeterUtils.toIdentityString(directUrl))),
                            "ProviderUrl: ".concat(JMeterUtils.defaultValue(JMeterUtils.toIdentityString(providerUrl))),

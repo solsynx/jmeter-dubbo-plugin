@@ -7,7 +7,7 @@
 
   <groupId>com.solsynx</groupId>
   <artifactId>jmeter-dubbo-plugin</artifactId>
-  <version>0.0.5</version>
+  <version>0.0.6</version>
   <packaging>pom</packaging>
   <name>JMeter Dubbo Plugin</name>
   <description>A plugin for Apache JMeter to test Dubbo Services</description>
@@ -25,6 +25,7 @@
   <modules>
     <module>jmeter-dubbo-core</module>
     <module>jmeter-dubbo-zookeeper</module>
+    <module>jmeter-dubbo-assembly</module>
   </modules>
 
   <developers>
@@ -54,6 +55,13 @@
         <scope>provided</scope>
       </dependency>
       <!-- Dubbo -->
+      <dependency>
+        <groupId>org.apache.dubbo</groupId>
+        <artifactId>dubbo-dependencies-bom</artifactId>
+        <version>${dubbo.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
       <dependency>
         <groupId>org.apache.dubbo</groupId>
         <artifactId>dubbo</artifactId>

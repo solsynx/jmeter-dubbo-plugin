@@ -28,6 +28,7 @@ import org.apache.dubbo.config.ReferenceConfig;
 import org.apache.dubbo.config.RegistryConfig;
 import org.apache.dubbo.config.utils.ReferenceConfigCache;
 import org.apache.dubbo.rpc.RpcContext;
+import org.apache.dubbo.rpc.RpcException;
 import org.apache.dubbo.rpc.model.ApplicationModel;
 import org.apache.dubbo.rpc.service.GenericService;
 import org.apache.jmeter.config.Arguments;
@@ -96,10 +97,14 @@ public class GenericDubbo {
             long latencyTime = System.currentTimeMillis() - latencyStartTime;
 
             setSuccessResult(result, o);
-            result.setConnectTime(connectTime);  // 连接时间
-            result.setLatency(latencyTime);      // 延迟时间
+            result.setConnectTime(connectTime);
+            result.setLatency(latencyTime);
         } catch (Throwable throwable) {
-            log.warn(throwable.getMessage(), throwable);
+            if (throwable instanceof RpcException) {
+                log.error("Dubbo RPC call failed: {}", throwable.getMessage(), throwable);
+            } else {
+                log.error("Unexpected error during Dubbo call: {}", throwable.getMessage(), throwable);
+            }
             handleException(throwable, result);
         } finally {
             finalizeResult(result, rpcContext);
@@ -144,6 +149,7 @@ public class GenericDubbo {
         }
         return parameters;
     }
+
     /**
      * 动态适配 Dubbo gson 泛化调用参数
      * 自动处理：JSON字符串、Map、Java对象 → 安全适配
@@ -168,7 +174,8 @@ public class GenericDubbo {
                 if (jsonStr.startsWith("{") || jsonStr.startsWith("[")) {
                     return JSON.parse(jsonStr);
                 }
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+            }
 
             // 普通字符串，直接返回
             return jsonStr;
@@ -178,6 +185,7 @@ public class GenericDubbo {
         // 非字符串类型（Map/对象）直接返回
         return param;
     }
+
     /**
      * 判断字符串是否是纯数字（整数/小数都支持）
      */
@@ -187,6 +195,7 @@ public class GenericDubbo {
         }
         return str.matches("-?\\d+(\\.\\d+)?");
     }
+
     /**
      * 设置成功结果对象
      *

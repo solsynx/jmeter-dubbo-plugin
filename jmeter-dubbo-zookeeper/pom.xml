@@ -8,7 +8,7 @@
   <parent>
     <groupId>com.solsynx</groupId>
     <artifactId>jmeter-dubbo-plugin</artifactId>
-    <version>0.0.5</version>
+    <version>0.0.6</version>
   </parent>
 
   <artifactId>jmeter-dubbo-zookeeper</artifactId>
@@ -27,38 +27,14 @@
 
     <!-- Zookeeper dependencies for 3.4.x versions -->
     <dependency>
-      <groupId>org.apache.dubbo</groupId>
-      <artifactId>dubbo-dependencies-zookeeper</artifactId>
-      <version>${dubbo.version}</version>
-      <type>pom</type>
+      <groupId>org.apache.curator</groupId>
+      <artifactId>curator-x-discovery</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.zookeeper</groupId>
+      <artifactId>zookeeper</artifactId>
     </dependency>
 
   </dependencies>
-
-  <build>
-    <plugins>
-      <!-- 使用Assembly Plugin打包并包含依赖项 -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <version>3.3.0</version>
-        <configuration>
-          <descriptors>
-            <descriptor>src/main/assembly/jar-with-dependencies.xml</descriptor>
-          </descriptors>
-          <appendAssemblyId>true</appendAssemblyId>
-        </configuration>
-        <executions>
-          <execution>
-            <id>make-assembly</id>
-            <phase>package</phase>
-            <goals>
-              <goal>single</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-  </build>
 
 </project>

@@ -38,6 +38,23 @@ JMeter Dubbo Plugin 是一个用于在 Apache JMeter 中测试 Dubbo 服务的�
 
 ## 版本历史
 
+### v0.0.6
+
+#### Bug Fixes
+
+- **修复日志级别不当问题**：优化 GenericDubbo 异常处理逻辑，根据异常类型使用不同的日志级别（RpcException使用ERROR，网络异常使用WARN），提升日志可读性和运维监控效率
+- **修复拼写错误**：修正 DubboSampleResult 中 "RregistryCenter" 为 "RegistryCenter"
+
+#### Features
+
+- **增强异常处理能力**：区分RPC异常、网络异常和未知异常，提供更精准的日志记录和错误诊断
+- **改进依赖管理**：在父POM中添加dubbo-dependencies-bom统一管理Dubbo相关依赖版本，避免版本冲突
+
+#### Improvements
+
+- **优化日志输出策略**：减少生产环境不必要的日志输出，同时保留完整的调试信息
+- **规范依赖版本管理**：采用Maven dependencyManagement机制集中管理依赖版本，提升项目可维护性
+
 ### v0.0.5
 
 #### Bug Fixes
@@ -137,7 +154,7 @@ JMeter Dubbo Plugin 是一个用于在 Apache JMeter 中测试 Dubbo 服务的�
 构建完成后，将生成的 jar 文件复制到 JMeter 的 lib/ext 目录：
 
 ```bash
-cp jmeter-dubbo-zookeeper/target/jmeter-dubbo-zookeeper-*-with-dependencies.jar $JMETER_HOME/lib/ext/
+cp jmeter-dubbo-assembly/target/jmeter-dubbo-zookeeper-*-with-dependencies.jar $JMETER_HOME/lib/ext/
 ```
 
 或者在 Maven 构建时会自动将 jar 文件复制到指定的 JMeter 目录（需要在 pom.xml 中配置正确的 JMeter 路径）。
@@ -198,3 +215,22 @@ Dubbo Sampler 在 JMeter GUI 中提供了丰富的配置选项，分为以下几
 ## 许可证
 
 本项目采用 Apache License 2.0 许可证。
+
+## 致谢
+
+感谢以下开源项目：
+- [Apache JMeter](https://jmeter.apache.org/)
+- [Apache Dubbo](https://dubbo.apache.org/)
+- [Apache ZooKeeper](https://zookeeper.apache.org/)
+
+## 联系方式
+
+- 作者：Yang Jun
+- 邮箱：xy.0520@hotmail.com
+- GitHub：[solsynx](https://github.com/solsynx)
+
+---
+
+**Star History**
+
+如果这个项目对你有帮助，请给我们一个 ⭐️ Star！

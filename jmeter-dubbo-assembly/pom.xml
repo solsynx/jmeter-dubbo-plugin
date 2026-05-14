@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.solsynx</groupId>
+    <artifactId>jmeter-dubbo-plugin</artifactId>
+    <version>0.0.6</version>
+  </parent>
+
+  <artifactId>jmeter-dubbo-assembly</artifactId>
+  <packaging>jar</packaging>
+
+  <name>JMeter Dubbo Plugin :: Assembly</name>
+  <description>Assembly module for building final JMeter plugin distribution</description>
+
+  <dependencies>
+    <dependency>
+      <groupId>com.solsynx</groupId>
+      <artifactId>jmeter-dubbo-core</artifactId>
+      <version>0.0.6</version>
+    </dependency>
+    <dependency>
+      <groupId>com.solsynx</groupId>
+      <artifactId>jmeter-dubbo-zookeeper</artifactId>
+      <version>0.0.6</version>
+    </dependency>
+  </dependencies>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>3.5.0</version>
+        <executions>
+          <execution>
+            <id>zookeeper</id>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <finalName>jmeter-dubbo-zookeeper-${project.version}-with-dependencies</finalName>
+              <createDependencyReducedPom>false</createDependencyReducedPom>
+              <shadedArtifactAttached>true</shadedArtifactAttached>
+              <artifactSet>
+                <includes>
+                  <include>com.solsynx:jmeter-dubbo-core</include>
+                  <include>com.solsynx:jmeter-dubbo-zookeeper</include>
+                  <include>org.apache.dubbo:*</include>
+                  <include>org.apache.zookeeper:*</include>
+                  <include>org.apache.curator:*</include>
+                  <include>com.alibaba:*</include>
+                  <include>io.netty:*</include>
+                  <include>com.google.guava:*</include>
+                  <include>com.fasterxml.jackson.core:*</include>
+                  <include>com.alibaba:fastjson</include>
+                  <include>org.javassist:javassist</include>
+                  <include>org.slf4j:*</include>
+                  <include>log4j:log4j</include>
+                  <include>org.yaml:snakeyaml</include>
+                  <include>javax.validation:*</include>
+                  <include>org.springframework:*</include>
+                </includes>
+                <excludes>
+                  <exclude>${project.groupId}:jmeter-dubbo-assembly</exclude>
+                </excludes>
+              </artifactSet>
+              <transformers>
+                <!-- 合并 Java SPI 文件 -->
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                <!-- 合并 Spring 配置文件 -->
+                <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                  <resource>META-INF/spring.factories</resource>
+                </transformer>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                  <resource>META-INF/spring.handlers</resource>
+                </transformer>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                  <resource>META-INF/spring.schemas</resource>
+                </transformer>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                  <resource>META-INF/spring.tooling</resource>
+                </transformer>
+                <!-- 合并 Dubbo SPI 文件 - 使用通配符方式 -->
+                <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                  <resource>META-INF/dubbo/internal/org.apache.dubbo.common.serialize.Serialization</resource>
+                </transformer>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                  <resource>META-INF/dubbo/internal/org.apache.dubbo.rpc.Protocol</resource>
+                </transformer>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                  <resource>META-INF/dubbo/internal/org.apache.dubbo.rpc.cluster.Cluster</resource>
+                </transformer>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                  <resource>META-INF/dubbo/internal/org.apache.dubbo.common.extension.ExtensionFactory</resource>
+                </transformer>
+                <!-- 合并其他可能的 SPI 文件 -->
+                <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                  <resource>META-INF/io.netty.versions.properties</resource>
+                </transformer>
+                <!-- 合并 LICENSE 和 NOTICE 文件 -->
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ApacheLicenseResourceTransformer"/>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ApacheNoticeResourceTransformer">
+                  <addHeader>false</addHeader>
+                </transformer>
+                <!-- 合并 DEPENDENCIES 文件 -->
+                <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                  <resource>META-INF/DEPENDENCIES</resource>
+                </transformer>
+              </transformers>
+              <filters>
+                <filter>
+                  <artifact>*:*</artifact>
+                  <excludes>
+                    <exclude>META-INF/*.SF</exclude>
+                    <exclude>META-INF/*.DSA</exclude>
+                    <exclude>META-INF/*.RSA</exclude>
+                    <!-- 排除重复的 Maven 元数据文件 -->
+                    <exclude>META-INF/maven/**/pom.properties</exclude>
+                    <exclude>META-INF/maven/**/pom.xml</exclude>
+                    <!-- 排除重复的 MANIFEST.MF，只保留最终的 -->
+                    <exclude>META-INF/MANIFEST.MF</exclude>
+                  </excludes>
+                </filter>
+              </filters>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>

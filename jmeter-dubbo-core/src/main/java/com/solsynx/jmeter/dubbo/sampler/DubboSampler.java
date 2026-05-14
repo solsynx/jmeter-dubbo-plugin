@@ -39,7 +39,7 @@ import java.io.Serializable;
  */
 public class DubboSampler extends AbstractSampler implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 5464587166655854915L;
 
     private static final String REGISTRY_TYPE = "DubboSampler.registryType";
     private static final String REGISTRY_ADDRESS = "DubboSampler.registryAddress";
