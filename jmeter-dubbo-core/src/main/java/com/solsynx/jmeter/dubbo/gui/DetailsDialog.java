@@ -95,7 +95,7 @@ public class DetailsDialog extends JDialog implements ActionListener {
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
 
-        valueField = JSyntaxTextArea.getInstance(2, 50);
+        valueField = JSyntaxTextArea.getInstance(15, 60);
         valueField.setLineWrap(true);
         valueField.setWrapStyleWord(true);
 // 1. 先设置文本
@@ -129,8 +129,8 @@ public class DetailsDialog extends JDialog implements ActionListener {
         add(buttonPanel, BorderLayout.SOUTH);
 
 // 窗口属性
-        setSize(500, 300);
-        setMinimumSize(new Dimension(500, 300));
+        setSize(800, 500);
+        setMinimumSize(new Dimension(600, 400));
         setLocationRelativeTo(getParent());
         setResizable(true);
     }

@@ -18,6 +18,7 @@
 package com.solsynx.jmeter.dubbo.core;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.solsynx.jmeter.dubbo.DubboSampleResult;
 import com.solsynx.jmeter.dubbo.context.ServiceContext;
 import com.solsynx.jmeter.dubbo.utils.JMeterUtils;
@@ -35,6 +36,9 @@ import org.apache.jmeter.config.Arguments;
 import org.apache.jmeter.samplers.SampleResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Map;
+import java.util.Properties;
 
 /**
  * 用于 JMeter 插件的 Dubbo 客户端
@@ -145,55 +149,90 @@ public class GenericDubbo {
         }
         Object[] parameters = new Object[arguments.getArgumentCount()];
         for (int i = 0; i < arguments.getArgumentCount(); i++) {
-            parameters[i] = adaptParam(arguments.getArgument(i).getValue());
+            parameters[i] = adaptParam(arguments.getArgument(i).getName(), arguments.getArgument(i).getValue());
         }
         return parameters;
     }
 
     /**
      * 动态适配 Dubbo gson 泛化调用参数
-     * 自动处理：JSON字符串、Map、Java对象 → 安全适配
+     *
+     * @param paramType 参数类型声明（用于识别特殊类型如 Properties）
+     * @param param     参数值的字符串表示
+     * @return 适配后的参数对象
      */
-    public static Object adaptParam(Object param) {
+    public static Object adaptParam(String paramType, String param) {
+        // 只判null，不判空
         if (param == null) {
             return null;
         }
-        // 只处理字符串，其他类型直接返回
-        if (param instanceof String) {
-            String jsonStr = (String) param;
-
-            // ==============================================
-            // 关键修复：如果是【纯数字字符串】，直接返回 String，不解析！
-            // ==============================================
-            if (isNumeric(jsonStr)) {
-                return jsonStr; // 直接返回字符串 "123"，不转成数字
-            }
-
-            // 尝试解析 JSON 对象（{} 或 []）
-            try {
-                if (jsonStr.startsWith("{") || jsonStr.startsWith("[")) {
-                    return JSON.parse(jsonStr);
-                }
-            } catch (Exception ignored) {
-            }
-
-            // 普通字符串，直接返回
-            return jsonStr;
+        String trimmed = param.trim();
+        if (trimmed.isEmpty()) {
+            log.debug("Parameter [{}] is empty string", paramType);
+            return trimmed;
         }
+        // 规则一：java.lang 基础类型统一按字符串处理，让 Dubbo 框架自动转换
+        if (isBasicType(paramType)) {
+            log.debug("Parameter [{}] is basic type, returning as string", paramType);
+            return trimmed;
+        }
+        // 规则二：检测并解析 JSON 结构（对象或数组）
+        if (trimmed.startsWith("{") || trimmed.startsWith("[")) {
+            log.debug("Parameter [{}] is JSON object or array, parsing", paramType);
+            try {
+                Object parsed = JSON.parse(trimmed);
+                if (parsed instanceof JSONObject) {
+                    JSONObject jsonObject = (JSONObject) parsed;
+                    if (isPropertiesType(paramType)) {
+                        return convertJsonToProperties(jsonObject);
+                    }
+                }
+                log.debug("Parameter [{}] is other JSON type, returning as object", paramType);
+                return parsed;
+            } catch (Exception e) {
+                log.warn("Failed to parse JSON for parameter [{}]: {}, keeping as string"
+                    , paramType, e.getMessage(), e);
+                return trimmed;
+            }
+        }
+        // 规则三：普通字符串直接返回
+        return trimmed;
+    }
 
-
-        // 非字符串类型（Map/对象）直接返回
-        return param;
+    private static Properties convertJsonToProperties(JSONObject jsonObject) {
+        Properties props = new Properties();
+        for (Map.Entry<String, Object> entry : jsonObject.entrySet()) {
+            String key = entry.getKey();
+            Object value = entry.getValue();
+            if (value != null) {
+                props.setProperty(key, value.toString());
+            }
+        }
+        log.debug("Manually converted JSON to Properties with {} entries", props.size());
+        return props;
     }
 
     /**
-     * 判断字符串是否是纯数字（整数/小数都支持）
+     * 判断是否为基本类型（java.lang 包下的类型）
+     *
+     * @param paramType 参数类型字符串
+     * @return 如果是基本类型返回 true
      */
-    private static boolean isNumeric(String str) {
-        if (str == null || str.isEmpty()) {
+    private static boolean isBasicType(String paramType) {
+        if (paramType == null || paramType.isEmpty()) {
             return false;
         }
-        return str.matches("-?\\d+(\\.\\d+)?");
+        // java.lang 包下的所有类型都视为基本类型
+        return paramType.startsWith("java.lang.");
+    }
+
+    private static boolean isPropertiesType(String paramType) {
+        if (paramType == null || paramType.isEmpty()) {
+            return false;
+        }
+        return StringUtils.equals(paramType, "java.util.Properties") ||
+            StringUtils.equals(paramType, "Properties") ||
+            paramType.endsWith(".Properties");
     }
 
     /**

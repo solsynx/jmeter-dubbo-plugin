@@ -38,6 +38,18 @@ JMeter Dubbo Plugin 是一个用于在 Apache JMeter 中测试 Dubbo 服务的�
 
 ## 版本历史
 
+### v0.0.7
+
+#### Features
+
+- **增强参数适配能力**：在 GenericDubbo 中新增 JSONObject 和 Properties 类型的智能识别与转换支持，提升复杂参数处理的灵活性
+- **优化详情编辑体验**：调整 DetailsDialog 语法高亮区域初始尺寸（15行x60列）及窗口最小尺寸（600x400），提供更舒适的参数编辑空间
+
+#### Improvements
+
+- **代码规范化**：为 assembly 模块新增 package-info.java 文件，补充 Apache License 声明，提升项目合规性
+- **版本管理**：统一更新所有模块版本号至 0.0.7，保持版本一致性
+
 ### v0.0.6
 
 #### Bug Fixes

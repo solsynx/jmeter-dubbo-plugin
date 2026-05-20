@@ -6,7 +6,7 @@
   <parent>
     <groupId>com.solsynx</groupId>
     <artifactId>jmeter-dubbo-plugin</artifactId>
-    <version>0.0.6</version>
+    <version>0.0.7</version>
   </parent>
 
   <artifactId>jmeter-dubbo-assembly</artifactId>
@@ -19,12 +19,12 @@
     <dependency>
       <groupId>com.solsynx</groupId>
       <artifactId>jmeter-dubbo-core</artifactId>
-      <version>0.0.6</version>
+      <version>0.0.7</version>
     </dependency>
     <dependency>
       <groupId>com.solsynx</groupId>
       <artifactId>jmeter-dubbo-zookeeper</artifactId>
-      <version>0.0.6</version>
+      <version>0.0.7</version>
     </dependency>
   </dependencies>
   <build>
@@ -43,7 +43,8 @@
             <configuration>
               <finalName>jmeter-dubbo-zookeeper-${project.version}-with-dependencies</finalName>
               <createDependencyReducedPom>false</createDependencyReducedPom>
-              <shadedArtifactAttached>true</shadedArtifactAttached>
+              <shadedArtifactAttached>false</shadedArtifactAttached>
+              <minimizeJar>false</minimizeJar>
               <artifactSet>
                 <includes>
                   <include>com.solsynx:jmeter-dubbo-core</include>
@@ -54,6 +55,7 @@
                   <include>com.alibaba:*</include>
                   <include>io.netty:*</include>
                   <include>com.google.guava:*</include>
+                  <include>com.google.code.gson:gson</include>
                   <include>com.fasterxml.jackson.core:*</include>
                   <include>com.alibaba:fastjson</include>
                   <include>org.javassist:javassist</include>
@@ -63,9 +65,6 @@
                   <include>javax.validation:*</include>
                   <include>org.springframework:*</include>
                 </includes>
-                <excludes>
-                  <exclude>${project.groupId}:jmeter-dubbo-assembly</exclude>
-                </excludes>
               </artifactSet>
               <transformers>
                 <!-- 合并 Java SPI 文件 -->
@@ -83,7 +82,7 @@
                 <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
                   <resource>META-INF/spring.tooling</resource>
                 </transformer>
-                <!-- 合并 Dubbo SPI 文件 - 使用通配符方式 -->
+                <!-- 合并 Dubbo SPI 文件 -->
                 <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
                   <resource>META-INF/dubbo/internal/org.apache.dubbo.common.serialize.Serialization</resource>
                 </transformer>
@@ -109,6 +108,14 @@
                 <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
                   <resource>META-INF/DEPENDENCIES</resource>
                 </transformer>
+                <!-- 生成 MANIFEST.MF -->
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                  <manifestEntries>
+                    <Implementation-Title>${project.name}</Implementation-Title>
+                    <Implementation-Version>${project.version}</Implementation-Version>
+                    <Build-Time>${maven.build.timestamp}</Build-Time>
+                  </manifestEntries>
+                </transformer>
               </transformers>
               <filters>
                 <filter>
@@ -117,10 +124,8 @@
                     <exclude>META-INF/*.SF</exclude>
                     <exclude>META-INF/*.DSA</exclude>
                     <exclude>META-INF/*.RSA</exclude>
-                    <!-- 排除重复的 Maven 元数据文件 -->
                     <exclude>META-INF/maven/**/pom.properties</exclude>
                     <exclude>META-INF/maven/**/pom.xml</exclude>
-                    <!-- 排除重复的 MANIFEST.MF，只保留最终的 -->
                     <exclude>META-INF/MANIFEST.MF</exclude>
                   </excludes>
                 </filter>
