@@ -314,6 +314,7 @@ public class GenericDubbo {
         result.setInterfaceName(context.getInterfaceName());
         result.setMethodName(context.getMethodName());
         result.setServiceGroup(context.getServiceGroup());
+        result.setServiceVersion(context.getServiceVersion());
         result.setParameters(JMeterUtils.toMapWithOrder(context.getParameters()));
     }
 
@@ -350,6 +351,10 @@ public class GenericDubbo {
         }
         // 服务接口全限定名
         reference.setInterface(context.getInterfaceName());
+        // 服务版本
+        if (StringUtils.isNotBlank(context.getServiceVersion())) {
+            reference.setVersion(context.getServiceVersion());
+        }
         // 声明为泛化接口
         reference.setGeneric("gson");
         reference.setTimeout(Integer.parseInt(context.getServiceTimeout()));

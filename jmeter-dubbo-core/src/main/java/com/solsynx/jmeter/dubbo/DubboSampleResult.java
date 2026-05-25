@@ -41,6 +41,7 @@ public class DubboSampleResult extends SampleResult {
     private String interfaceName;
     private String methodName;
     private String serviceGroup;
+    private String serviceVersion;
 
     private Map<String, String> parameters;
 
@@ -164,6 +165,22 @@ public class DubboSampleResult extends SampleResult {
     }
 
     /**
+     * 获取服务版本
+     * @return 服务版本名称
+     */
+    public String getServiceVersion() {
+        return serviceVersion;
+    }
+
+    /**
+     * 设置服务版本
+     * @param serviceVersion 服务版本名称
+     */
+    public void setServiceVersion(String serviceVersion) {
+        this.serviceVersion = serviceVersion;
+    }
+
+    /**
      * 获取参数映射
      * @return 参数映射表
      */
@@ -191,6 +208,7 @@ public class DubboSampleResult extends SampleResult {
                            "DirectUrl: ".concat(JMeterUtils.defaultValue(JMeterUtils.toIdentityString(directUrl))),
                            "ProviderUrl: ".concat(JMeterUtils.defaultValue(JMeterUtils.toIdentityString(providerUrl))),
                            "ServiceGroup: ".concat(JMeterUtils.defaultValue(serviceGroup)),
+                           "ServiceVersion: ".concat(JMeterUtils.defaultValue(serviceVersion)),
                            "InterfaceName: ".concat(JMeterUtils.defaultValue(interfaceName)),
                            "MethodName: ".concat(JMeterUtils.defaultValue(methodName))) + "\n\n" +
             getParametersAsString();

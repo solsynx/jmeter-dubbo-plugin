@@ -6,7 +6,7 @@
   <parent>
     <groupId>com.solsynx</groupId>
     <artifactId>jmeter-dubbo-plugin</artifactId>
-    <version>0.0.7</version>
+    <version>0.0.8</version>
   </parent>
 
   <artifactId>jmeter-dubbo-assembly</artifactId>
@@ -19,12 +19,12 @@
     <dependency>
       <groupId>com.solsynx</groupId>
       <artifactId>jmeter-dubbo-core</artifactId>
-      <version>0.0.7</version>
+      <version>0.0.8</version>
     </dependency>
     <dependency>
       <groupId>com.solsynx</groupId>
       <artifactId>jmeter-dubbo-zookeeper</artifactId>
-      <version>0.0.7</version>
+      <version>0.0.8</version>
     </dependency>
   </dependencies>
   <build>

@@ -56,6 +56,7 @@ public class DubboSamplerGui extends AbstractSamplerGui implements ActionListene
     // Service configuration fields
     private JLabeledTextField directUrlField;
     private JLabeledTextField serviceGroupField;
+    private JLabeledTextField serviceVersionField;
     private JLabeledTextField interfaceNameField;
     private JLabeledTextField methodNameField;
     private JLabeledTextField serviceTimeoutField;
@@ -137,6 +138,7 @@ public class DubboSamplerGui extends AbstractSamplerGui implements ActionListene
         // Service configuration
         sampler.setDirectUrl(getSafeText(directUrlField));
         sampler.setServiceGroup(getSafeText(serviceGroupField));
+        sampler.setServiceVersion(getSafeText(serviceVersionField));
         sampler.setInterfaceName(getSafeText(interfaceNameField));
         sampler.setMethodName(getSafeText(methodNameField));
         sampler.setServiceTimeout(getSafeText(serviceTimeoutField));
@@ -183,6 +185,7 @@ public class DubboSamplerGui extends AbstractSamplerGui implements ActionListene
             // Service configuration
             directUrlField.setText(sampler.getDirectUrl());
             serviceGroupField.setText(sampler.getServiceGroup());
+            serviceVersionField.setText(sampler.getServiceVersion());
             interfaceNameField.setText(sampler.getInterfaceName());
             methodNameField.setText(sampler.getMethodName());
             serviceTimeoutField.setText(sampler.getServiceTimeout());
@@ -230,6 +233,7 @@ public class DubboSamplerGui extends AbstractSamplerGui implements ActionListene
         // Service configuration defaults
         directUrlField.setText("");
         serviceGroupField.setText("");
+        serviceVersionField.setText("");
         interfaceNameField.setText("");
         methodNameField.setText("");
         serviceTimeoutField.setText("1000");
@@ -330,28 +334,29 @@ public class DubboSamplerGui extends AbstractSamplerGui implements ActionListene
         JPanel panel = new VerticalPanel();
         panel.setBorder(BorderFactory.createTitledBorder(JMeterUtils.getResString("service_config")));
 
-        JPanel urlPanel = new HorizontalPanel();
-        // Interface and method panel - interface takes 2/3, method takes 1/3
-        JPanel interfacePanel = new HorizontalPanel();
+        // First row: Interface and Method
+        JPanel interfaceMethodPanel = new HorizontalPanel();
         interfaceNameField = JMeterUtils.createJLabeledTextField("interfaceName.displayName", 40);
         methodNameField = JMeterUtils.createJLabeledTextField("methodName.displayName", 16);
+        interfaceMethodPanel.add(interfaceNameField);
+        interfaceMethodPanel.add(methodNameField);
 
-        interfacePanel.add(interfaceNameField);
-        interfacePanel.add(methodNameField);
-
-        // Service group and timeout panel - each takes 1/3, with 1/3 empty space
-
+        // Second row: Service Group, Version and Timeout
+        JPanel serviceDetailsPanel = new HorizontalPanel();
         serviceGroupField = JMeterUtils.createJLabeledTextField("serviceGroup.displayName", 12);
+        serviceVersionField = JMeterUtils.createJLabeledTextField("serviceVersion.displayName", 12);
         serviceTimeoutField = JMeterUtils.createJLabeledTextField("serviceTimeout.displayName", 12);
+        serviceDetailsPanel.add(serviceGroupField);
+        serviceDetailsPanel.add(serviceVersionField);
+        serviceDetailsPanel.add(serviceTimeoutField);
 
-        interfacePanel.add(serviceGroupField);
-        interfacePanel.add(serviceTimeoutField);
-        // Add an empty space component to fill the remaining 1/3
-
+        // Third row: Direct URL
+        JPanel urlPanel = new HorizontalPanel();
         directUrlField = JMeterUtils.createJLabeledTextField("directUrl.displayName", 60);
         urlPanel.add(directUrlField);
 
-        panel.add(interfacePanel);
+        panel.add(interfaceMethodPanel);
+        panel.add(serviceDetailsPanel);
         panel.add(urlPanel);
 
         return panel;

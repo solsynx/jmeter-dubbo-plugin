@@ -49,6 +49,7 @@ public class DubboSampler extends AbstractSampler implements Serializable {
     private static final String REGISTRY_PASSWORD = "DubboSampler.registryPassword";
     private static final String DIRECT_URL = "DubboSampler.directUrl";
     private static final String SERVICE_GROUP = "DubboSampler.serviceGroup";
+    private static final String SERVICE_VERSION = "DubboSampler.serviceVersion";
     private static final String INTERFACE_NAME = "DubboSampler.interfaceName";
     private static final String METHOD_NAME = "DubboSampler.methodName";
     private static final String SERVICE_TIMEOUT = "DubboSampler.serviceTimeout";
@@ -223,6 +224,24 @@ public class DubboSampler extends AbstractSampler implements Serializable {
      */
     public void setServiceGroup(String serviceGroup) {
         setProperty(SERVICE_GROUP, serviceGroup);
+    }
+
+    /**
+     * 获取服务版本
+     *
+     * @return 服务版本
+     */
+    public String getServiceVersion() {
+        return getPropertyAsString(SERVICE_VERSION);
+    }
+
+    /**
+     * 设置服务版本
+     *
+     * @param serviceVersion 服务版本
+     */
+    public void setServiceVersion(String serviceVersion) {
+        setProperty(SERVICE_VERSION, serviceVersion);
     }
 
     /**

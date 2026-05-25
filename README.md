@@ -38,6 +38,19 @@ JMeter Dubbo Plugin 是一个用于在 Apache JMeter 中测试 Dubbo 服务的�
 
 ## 版本历史
 
+### v0.0.8
+
+#### Features
+
+- **新增 Service Version 支持**：在 DubboSampler、ServiceContext、DubboSampleResult 中新增 serviceVersion 字段，完善多版本服务测试能力
+- **增强 GUI 配置界面**：在 DubboSamplerGui 中添加版本输入框，支持可视化配置服务版本
+- **完善泛化调用配置**：在 GenericDubbo 中将 serviceVersion 应用到 Reference 配置和采样结果记录
+
+#### Improvements
+
+- **国际化支持**：更新中英文资源文件，添加 version 显示名称（Version/版本）
+- **版本管理**：统一更新所有模块版本号至 0.0.8，保持版本一致性
+
 ### v0.0.7
 
 #### Features

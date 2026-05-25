@@ -40,6 +40,7 @@ public class ServiceContext {
 
     private String directUrl;
     private String serviceGroup;
+    private String serviceVersion;
     private String interfaceName;
     private String methodName;
     private String serviceTimeout;
@@ -66,6 +67,7 @@ public class ServiceContext {
         registryPassword = sampler.getRegistryPassword();
         directUrl = sampler.getDirectUrl();
         serviceGroup = sampler.getServiceGroup();
+        serviceVersion = sampler.getServiceVersion();
         interfaceName = sampler.getInterfaceName();
         methodName = sampler.getMethodName();
         serviceTimeout = sampler.getServiceTimeout();
@@ -233,6 +235,24 @@ public class ServiceContext {
      */
     public ServiceContext setServiceGroup(String serviceGroup) {
         this.serviceGroup = serviceGroup;
+        return this;
+    }
+
+    /**
+     * 获取服务版本
+     * @return 服务版本
+     */
+    public String getServiceVersion() {
+        return serviceVersion;
+    }
+
+    /**
+     * 设置服务版本
+     * @param serviceVersion 服务版本
+     * @return 当前服务上下文实例
+     */
+    public ServiceContext setServiceVersion(String serviceVersion) {
+        this.serviceVersion = serviceVersion;
         return this;
     }
 
