@@ -37,10 +37,14 @@ public class ServiceContext {
     private String registryTimeout;
     private String registryUsername;
     private String registryPassword;
+    private String registryNamespace;
+    private String registryAccessKey;
+    private String registrySecretKey;
 
     private String directUrl;
     private String serviceGroup;
     private String serviceVersion;
+    private String serviceProvider;
     private String interfaceName;
     private String methodName;
     private String serviceTimeout;
@@ -65,9 +69,13 @@ public class ServiceContext {
         registryTimeout = sampler.getRegistryTimeout();
         registryUsername = sampler.getRegistryUsername();
         registryPassword = sampler.getRegistryPassword();
+        registryNamespace = sampler.getRegistryNamespace();
+        registryAccessKey = sampler.getRegistryAccessKey();
+        registrySecretKey = sampler.getRegistrySecretKey();
         directUrl = sampler.getDirectUrl();
         serviceGroup = sampler.getServiceGroup();
         serviceVersion = sampler.getServiceVersion();
+        serviceProvider = sampler.getServiceProvider();
         interfaceName = sampler.getInterfaceName();
         methodName = sampler.getMethodName();
         serviceTimeout = sampler.getServiceTimeout();
@@ -203,6 +211,60 @@ public class ServiceContext {
     }
 
     /**
+     * 获取注册中心命名空间（Nacos）
+     * @return 注册中心命名空间
+     */
+    public String getRegistryNamespace() {
+        return registryNamespace;
+    }
+
+    /**
+     * 设置注册中心命名空间（Nacos）
+     * @param registryNamespace 注册中心命名空间
+     * @return 当前服务上下文实例
+     */
+    public ServiceContext setRegistryNamespace(String registryNamespace) {
+        this.registryNamespace = registryNamespace;
+        return this;
+    }
+
+    /**
+     * 获取注册中心 AccessKey（Nacos 鉴权）
+     * @return 注册中心 AccessKey
+     */
+    public String getRegistryAccessKey() {
+        return registryAccessKey;
+    }
+
+    /**
+     * 设置注册中心 AccessKey（Nacos 鉴权）
+     * @param registryAccessKey 注册中心 AccessKey
+     * @return 当前服务上下文实例
+     */
+    public ServiceContext setRegistryAccessKey(String registryAccessKey) {
+        this.registryAccessKey = registryAccessKey;
+        return this;
+    }
+
+    /**
+     * 获取注册中心 SecretKey（Nacos 鉴权）
+     * @return 注册中心 SecretKey
+     */
+    public String getRegistrySecretKey() {
+        return registrySecretKey;
+    }
+
+    /**
+     * 设置注册中心 SecretKey（Nacos 鉴权）
+     * @param registrySecretKey 注册中心 SecretKey
+     * @return 当前服务上下文实例
+     */
+    public ServiceContext setRegistrySecretKey(String registrySecretKey) {
+        this.registrySecretKey = registrySecretKey;
+        return this;
+    }
+
+    /**
      * 获取直连 URL
      * @return 直连 URL
      */
@@ -253,6 +315,24 @@ public class ServiceContext {
      */
     public ServiceContext setServiceVersion(String serviceVersion) {
         this.serviceVersion = serviceVersion;
+        return this;
+    }
+
+    /**
+     * 获取服务提供方应用名（provided-by，Dubbo 3 应用级发现必需）
+     * @return 服务提供方应用名
+     */
+    public String getServiceProvider() {
+        return serviceProvider;
+    }
+
+    /**
+     * 设置服务提供方应用名（provided-by，Dubbo 3 应用级发现必需）
+     * @param serviceProvider 服务提供方应用名
+     * @return 当前服务上下文实例
+     */
+    public ServiceContext setServiceProvider(String serviceProvider) {
+        this.serviceProvider = serviceProvider;
         return this;
     }
 

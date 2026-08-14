@@ -27,7 +27,7 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.dubbo.config.ApplicationConfig;
 import org.apache.dubbo.config.ReferenceConfig;
 import org.apache.dubbo.config.RegistryConfig;
-import org.apache.dubbo.config.utils.ReferenceConfigCache;
+import org.apache.dubbo.config.utils.SimpleReferenceCache;
 import org.apache.dubbo.rpc.RpcContext;
 import org.apache.dubbo.rpc.RpcException;
 import org.apache.dubbo.rpc.model.ApplicationModel;
@@ -37,6 +37,7 @@ import org.apache.jmeter.samplers.SampleResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
@@ -60,7 +61,8 @@ public class GenericDubbo {
         application.setName("jmeter-plugin-dubbo");
         application.setQosEnable(false);
         application.setQosAcceptForeignIp(false);
-        ApplicationModel.getConfigManager().setApplication(application);
+        // Dubbo 3.x：ApplicationModel.defaultModel() 获取默认应用模型
+        ApplicationModel.defaultModel().getApplicationConfigManager().setApplication(application);
     }
 
     /**
@@ -176,24 +178,25 @@ public class GenericDubbo {
             log.debug("Parameter [{}] is basic type, returning as string", paramType);
             return trimmed;
         }
-        // 规则二：检测并解析 JSON 结构（对象或数组）
+        // 规则二：JSON 结构（对象或数组）——以 JSON 字符串原样传递
+        // Dubbo 2.7 / 3.x 的 Provider 端 GenericFilter 对 gson 泛化要求参数必须是 String，
+        // 再由 Provider 侧 Gson 反序列化为真实类型；若传解析后的 JSONObject/JSONArray，
+        // 会触发 "arguments must be of type String" 报错。
         if (trimmed.startsWith("{") || trimmed.startsWith("[")) {
-            log.debug("Parameter [{}] is JSON object or array, parsing", paramType);
-            try {
-                Object parsed = JSON.parse(trimmed);
-                if (parsed instanceof JSONObject) {
-                    JSONObject jsonObject = (JSONObject) parsed;
-                    if (isPropertiesType(paramType)) {
-                        return convertJsonToProperties(jsonObject);
+            // 特例：java.util.Properties 类型仍需转换成 Properties
+            if (isPropertiesType(paramType)) {
+                try {
+                    Object parsed = JSON.parse(trimmed);
+                    if (parsed instanceof JSONObject) {
+                        return convertJsonToProperties((JSONObject) parsed);
                     }
+                } catch (Exception e) {
+                    log.warn("Failed to parse JSON for Properties parameter [{}]: {}, keeping as string"
+                        , paramType, e.getMessage(), e);
                 }
-                log.debug("Parameter [{}] is other JSON type, returning as object", paramType);
-                return parsed;
-            } catch (Exception e) {
-                log.warn("Failed to parse JSON for parameter [{}]: {}, keeping as string"
-                    , paramType, e.getMessage(), e);
-                return trimmed;
             }
+            log.debug("Parameter [{}] is JSON, passing through as string", paramType);
+            return trimmed;
         }
         // 规则三：普通字符串直接返回
         return trimmed;
@@ -326,7 +329,8 @@ public class GenericDubbo {
      * @since 0.0.2
      */
     public static GenericService getService(ServiceContext context) {
-        return ReferenceConfigCache.getCache().get(getReferenceConfig(context));
+        // Dubbo 3.3.x：ReferenceConfigCache 重构为 SimpleReferenceCache
+        return SimpleReferenceCache.getCache().get(getReferenceConfig(context), true);
     }
 
     /**
@@ -345,6 +349,7 @@ public class GenericDubbo {
             registry.setTimeout(Integer.parseInt(context.getRegistryTimeout()));
             registry.setUsername(context.getRegistryUsername());
             registry.setPassword(context.getRegistryPassword());
+            applyNacosParameters(context, registry);
             reference.setRegistry(registry);
         } else {
             reference.setUrl(context.getDirectUrl());
@@ -355,11 +360,67 @@ public class GenericDubbo {
         if (StringUtils.isNotBlank(context.getServiceVersion())) {
             reference.setVersion(context.getServiceVersion());
         }
+        // 服务组（与提供方导出时的 group 必须一致，否则 Not found exported service）
+        if (StringUtils.isNotBlank(context.getServiceGroup())) {
+            reference.setGroup(context.getServiceGroup());
+        }
+        // Dubbo 3 应用级发现：通过 provided-by 参数指定提供方应用名，
+        // ServiceNameMapping.getMappingByUrl 会直接用它订阅对应应用的实例
+        if (StringUtils.isNotBlank(context.getServiceProvider())) {
+            Map<String, String> referenceParameters = reference.getParameters();
+            if (referenceParameters == null) {
+                referenceParameters = new HashMap<>();
+                reference.setParameters(referenceParameters);
+            }
+            referenceParameters.put("provided-by", context.getServiceProvider());
+        }
         // 声明为泛化接口
         reference.setGeneric("gson");
         reference.setTimeout(Integer.parseInt(context.getServiceTimeout()));
         // 关闭重试
         reference.setRetries(0);
         return reference;
+    }
+
+    /**
+     * 应用 Nacos 注册中心专属配置（命名空间、鉴权、组映射）
+     *
+     * <p>Dubbo 2.7 的 Nacos registry 会把注册中心 URL 中与 Nacos 客户端
+     * {@code PropertyKeyConst} 同名的参数透传给 Nacos 客户端，因此命名空间、
+     * accessKey、secretKey 通过 RegistryConfig 的 parameters 注入即可生效。
+     * Nacos 命名组通过 {@code nacos.group} 参数读取（默认 DEFAULT_GROUP），
+     * 这里将 GUI 上的"组"字段映射过去。</p>
+     *
+     * @param context 服务上下文
+     * @param registry 注册中心配置
+     */
+    private static void applyNacosParameters(ServiceContext context, RegistryConfig registry) {
+        Map<String, String> parameters = new HashMap<>();
+        if (StringUtils.isNotBlank(context.getRegistryNamespace())) {
+            parameters.put("namespace", context.getRegistryNamespace());
+        }
+        if (StringUtils.isNotBlank(context.getRegistryAccessKey())) {
+            parameters.put("accessKey", context.getRegistryAccessKey());
+        }
+        if (StringUtils.isNotBlank(context.getRegistrySecretKey())) {
+            parameters.put("secretKey", context.getRegistrySecretKey());
+        }
+        // Dubbo 3.3 的 RegistryConfig.setUsername/Password 不会写入注册中心 URL
+        // （无 userinfo 也无参数），此处以 URL 参数形式注入，
+        // NacosConnectionManager 会按 PropertyKeyConst 透传给 nacos-client 完成鉴权
+        if (StringUtils.isNotBlank(context.getRegistryUsername())) {
+            parameters.put("username", context.getRegistryUsername());
+        }
+        if (StringUtils.isNotBlank(context.getRegistryPassword())) {
+            parameters.put("password", context.getRegistryPassword());
+        }
+        // 仅对 nacos 类型把"组"字段映射为 nacos.group，避免影响 zookeeper
+        if ("nacos".equals(context.getRegistryType())
+                && StringUtils.isNotBlank(context.getRegistryGroup())) {
+            parameters.put("nacos.group", context.getRegistryGroup());
+        }
+        if (!parameters.isEmpty()) {
+            registry.setParameters(parameters);
+        }
     }
 }

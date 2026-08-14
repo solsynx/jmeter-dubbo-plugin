@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testResults version="1.2">
+<com.solsynx.jmeter.dubbo.DubboSampleResult t="70" it="0" lt="0" ct="0" ts="1786696073992" s="false" lb="Dubbo 调用 reportStudy" rc="500" rm="com.alibaba.dubbo.rpc.service.GenericException" tn="线程组 1-1" dt="text" by="7644" sby="0" ng="1" na="1">
+  <responseData class="java.lang.String">com.alibaba.dubbo.rpc.service.GenericException: java.lang.RuntimeException: 案例不存在或已删除
+java.lang.RuntimeException: 案例不存在或已删除
+	at com.iflytek.vie.app.provider.impl.casestudy.CaseStudyServiceImpl.reportStudy(CaseStudyServiceImpl.java:38)
+	at com.iflytek.vie.app.provider.impl.casestudy.CaseStudyServiceImplDubboWrap30.invokeMethod(CaseStudyServiceImplDubboWrap30.java)
+	at org.apache.dubbo.rpc.proxy.javassist.JavassistProxyFactory$1.doInvoke(JavassistProxyFactory.java:89)
+	at org.apache.dubbo.rpc.proxy.AbstractProxyInvoker.invoke(AbstractProxyInvoker.java:100)
+	at org.apache.dubbo.config.invoker.DelegateProviderMetaDataInvoker.invoke(DelegateProviderMetaDataInvoker.java:55)
+	at org.apache.dubbo.rpc.protocol.InvokerWrapper.invoke(InvokerWrapper.java:56)
+	at org.apache.dubbo.rpc.filter.ClassLoaderCallbackFilter.invoke(ClassLoaderCallbackFilter.java:38)
+	at org.apache.dubbo.rpc.cluster.filter.FilterChainBuilder$CopyOfFilterChainNode.invoke(FilterChainBuilder.java:349)
+	at org.apache.dubbo.spring.security.filter.AuthenticationExceptionTranslatorFilter.invoke(AuthenticationExceptionTranslatorFilter.java:51)
+	at org.apache.dubbo.rpc.cluster.filter.FilterChainBuilder$CopyOfFilterChainNode.invoke(FilterChainBuilder.java:349)
+	at org.apache.dubbo.rpc.protocol.tri.rest.filter.RestFilterAdapter.invoke(RestFilterAdapter.java:38)
+	at org.apache.dubbo.rpc.cluster.filter.FilterChainBuilder$CopyOfFilterChainNode.invoke(FilterChainBuilder.java:349)
+	at org.apache.dubbo.rpc.protocol.tri.h12.HttpContextCallbackFilter.invoke(HttpContextCallbackFilter.java:37)
+	at org.apache.dubbo.rpc.cluster.filter.FilterChainBuilder$CopyOfFilterChainNode.invoke(FilterChainBuilder.java:349)
+	at org.apache.dubbo.rpc.protocol.dubbo.filter.TraceFilter.invoke(TraceFilter.java:78)
+	at org.apache.dubbo.rpc.cluster.filter.FilterChainBuilder$CopyOfFilterChainNode.invoke(FilterChainBuilder.java:349)
+	at org.apache.dubbo.rpc.filter.TimeoutFilter.invoke(TimeoutFilter.java:45)
+	at org.apache.dubbo.rpc.cluster.filter.FilterChainBuilder$CopyOfFilterChainNode.invoke(FilterChainBuilder.java:349)
+	at org.apache.dubbo.monitor.support.MonitorFilter.invoke(MonitorFilter.java:109)
+	at org.apache.dubbo.rpc.cluster.filter.FilterChainBuilder$CopyOfFilterChainNode.invoke(FilterChainBuilder.java:349)
+	at org.apache.dubbo.rpc.filter.ExceptionFilter.invoke(ExceptionFilter.java:55)
+	at org.apache.dubbo.rpc.cluster.filter.FilterChainBuilder$CopyOfFilterChainNode.invoke(FilterChainBuilder.java:349)
+	at org.apache.dubbo.rpc.filter.AccessLogFilter.invoke(AccessLogFilter.java:120)
+	at org.apache.dubbo.rpc.cluster.filter.FilterChainBuilder$CopyOfFilterChainNode.invoke(FilterChainBuilder.java:349)
+	at org.apache.dubbo.spring.security.filter.ContextHolderAuthenticationResolverFilter.invoke(ContextHolderAuthenticationResolverFilter.java:64)
+	at org.apache.dubbo.rpc.cluster.filter.FilterChainBuilder$CopyOfFilterChainNode.invoke(FilterChainBuilder.java:349)
+	at org.apache.dubbo.rpc.filter.GenericFilter.invoke(GenericFilter.java:218)
+	at org.apache.dubbo.rpc.cluster.filter.FilterChainBuilder$CopyOfFilterChainNode.invoke(FilterChainBuilder.java:349)
+	at org.apache.dubbo.rpc.protocol.tri.h12.HttpContextFilter.invoke(HttpContextFilter.java:38)
+	at org.apache.dubbo.rpc.cluster.filter.FilterChainBuilder$CopyOfFilterChainNode.invoke(FilterChainBuilder.java:349)
+	at org.apache.dubbo.rpc.filter.ClassLoaderFilter.invoke(ClassLoaderFilter.java:54)
+	at org.apache.dubbo.rpc.cluster.filter.FilterChainBuilder$CopyOfFilterChainNode.invoke(FilterChainBuilder.java:349)
+	at org.apache.dubbo.rpc.filter.EchoFilter.invoke(EchoFilter.java:41)
+	at org.apache.dubbo.rpc.cluster.filter.FilterChainBuilder$CopyOfFilterChainNode.invoke(FilterChainBuilder.java:349)
+	at org.apache.dubbo.metrics.filter.MetricsFilter.invoke(MetricsFilter.java:86)
+	at org.apache.dubbo.metrics.filter.MetricsProviderFilter.invoke(MetricsProviderFilter.java:37)
+	at org.apache.dubbo.rpc.cluster.filter.FilterChainBuilder$CopyOfFilterChainNode.invoke(FilterChainBuilder.java:349)
+	at org.apache.dubbo.tracing.filter.ObservationReceiverFilter.invoke(ObservationReceiverFilter.java:59)
+	at org.apache.dubbo.rpc.cluster.filter.FilterChainBuilder$CopyOfFilterChainNode.invoke(FilterChainBuilder.java:349)
+	at org.apache.dubbo.rpc.filter.ProfilerServerFilter.invoke(ProfilerServerFilter.java:66)
+	at org.apache.dubbo.rpc.cluster.filter.FilterChainBuilder$CopyOfFilterChainNode.invoke(FilterChainBuilder.java:349)
+	at org.apache.dubbo.rpc.filter.ContextFilter.invoke(ContextFilter.java:191)
+	at org.apache.dubbo.rpc.cluster.filter.FilterChainBuilder$CopyOfFilterChainNode.invoke(FilterChainBuilder.java:349)
+	at org.apache.dubbo.rpc.cluster.filter.FilterChainBuilder$CallbackRegistrationInvoker.invoke(FilterChainBuilder.java:197)
+	at org.apache.dubbo.rpc.protocol.dubbo.DubboProtocol$1.reply(DubboProtocol.java:167)
+	at org.apache.dubbo.remoting.exchange.support.header.HeaderExchangeHandler.handleRequest(HeaderExchangeHandler.java:110)
+	at org.apache.dubbo.remoting.exchange.support.header.HeaderExchangeHandler.received(HeaderExchangeHandler.java:205)
+	at org.apache.dubbo.remoting.transport.DecodeHandler.received(DecodeHandler.java:52)
+	at org.apache.dubbo.remoting.transport.dispatcher.ChannelEventRunnable.run(ChannelEventRunnable.java:64)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+	at org.apache.dubbo.common.threadlocal.InternalRunnable.run(InternalRunnable.java:39)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+&#xd;
+	at jdk.internal.reflect.DirectConstructorHandleAccessor.newInstance(DirectConstructorHandleAccessor.java:62)&#xd;
+	at java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:502)&#xd;
+	at java.lang.reflect.Constructor.newInstance(Constructor.java:486)&#xd;
+	at org.apache.dubbo.common.compact.Dubbo2GenericExceptionUtils.newGenericException(Dubbo2GenericExceptionUtils.java:124)&#xd;
+	at org.apache.dubbo.rpc.filter.GenericFilter.onResponse(GenericFilter.java:332)&#xd;
+	at org.apache.dubbo.rpc.cluster.filter.FilterChainBuilder$CallbackRegistrationInvoker.lambda$invoke$1(FilterChainBuilder.java:221)&#xd;
+	at org.apache.dubbo.rpc.AsyncRpcResult.lambda$whenCompleteWithContext$0(AsyncRpcResult.java:254)&#xd;
+	at java.util.concurrent.CompletableFuture.uniWhenComplete(CompletableFuture.java:863)&#xd;
+	at java.util.concurrent.CompletableFuture.uniWhenCompleteStage(CompletableFuture.java:887)&#xd;
+	at java.util.concurrent.CompletableFuture.whenComplete(CompletableFuture.java:2357)&#xd;
+	at org.apache.dubbo.rpc.AsyncRpcResult.whenCompleteWithContext(AsyncRpcResult.java:250)&#xd;
+	at org.apache.dubbo.rpc.cluster.filter.FilterChainBuilder$CallbackRegistrationInvoker.invoke(FilterChainBuilder.java:198)&#xd;
+	at org.apache.dubbo.rpc.protocol.dubbo.DubboProtocol$1.reply(DubboProtocol.java:167)&#xd;
+	at org.apache.dubbo.remoting.exchange.support.header.HeaderExchangeHandler.handleRequest(HeaderExchangeHandler.java:110)&#xd;
+	at org.apache.dubbo.remoting.exchange.support.header.HeaderExchangeHandler.received(HeaderExchangeHandler.java:205)&#xd;
+	at org.apache.dubbo.remoting.transport.DecodeHandler.received(DecodeHandler.java:52)&#xd;
+	at org.apache.dubbo.remoting.transport.dispatcher.ChannelEventRunnable.run(ChannelEventRunnable.java:64)&#xd;
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)&#xd;
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)&#xd;
+	at org.apache.dubbo.common.threadlocal.InternalRunnable.run(InternalRunnable.java:39)&#xd;
+	at java.lang.Thread.run(Thread.java:1583)&#xd;
+</responseData>
+</com.solsynx.jmeter.dubbo.DubboSampleResult>
+
+</testResults>

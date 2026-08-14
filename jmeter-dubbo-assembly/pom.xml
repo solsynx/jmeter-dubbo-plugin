@@ -26,6 +26,11 @@
       <artifactId>jmeter-dubbo-zookeeper</artifactId>
       <version>0.0.8</version>
     </dependency>
+    <dependency>
+      <groupId>com.solsynx</groupId>
+      <artifactId>jmeter-dubbo-nacos</artifactId>
+      <version>0.0.8</version>
+    </dependency>
   </dependencies>
   <build>
     <plugins>
@@ -49,14 +54,20 @@
                 <includes>
                   <include>com.solsynx:jmeter-dubbo-core</include>
                   <include>com.solsynx:jmeter-dubbo-zookeeper</include>
+                  <include>com.solsynx:jmeter-dubbo-nacos</include>
                   <include>org.apache.dubbo:*</include>
                   <include>org.apache.zookeeper:*</include>
                   <include>org.apache.curator:*</include>
                   <include>com.alibaba:*</include>
+                  <include>com.alibaba.fastjson2:*</include>
+                  <include>com.alibaba.nacos:*</include>
+                  <include>io.prometheus:*</include>
+                  <include>io.micrometer:*</include>
                   <include>io.netty:*</include>
                   <include>com.google.guava:*</include>
                   <include>com.google.code.gson:gson</include>
                   <include>com.fasterxml.jackson.core:*</include>
+                  <include>com.fasterxml.jackson.datatype:*</include>
                   <include>com.alibaba:fastjson</include>
                   <include>org.javassist:javassist</include>
                   <include>org.slf4j:*</include>
