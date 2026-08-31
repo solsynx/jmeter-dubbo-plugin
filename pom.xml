@@ -25,6 +25,7 @@
   <modules>
     <module>jmeter-dubbo-core</module>
     <module>jmeter-dubbo-zookeeper</module>
+    <module>jmeter-dubbo-nacos</module>
     <module>jmeter-dubbo-assembly</module>
   </modules>
 
@@ -41,7 +42,7 @@
     <maven.compiler.target>1.8</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <jmeter.version>5.6.3</jmeter.version>
-    <dubbo.version>2.7.23</dubbo.version>
+    <dubbo.version>3.3.6</dubbo.version>
     <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
   </properties>
 
@@ -54,18 +55,45 @@
         <version>${jmeter.version}</version>
         <scope>provided</scope>
       </dependency>
-      <!-- Dubbo -->
-      <dependency>
-        <groupId>org.apache.dubbo</groupId>
-        <artifactId>dubbo-dependencies-bom</artifactId>
-        <version>${dubbo.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
+      <!-- Dubbo 3.3.6（无 3.3.x 的 dubbo-dependencies-bom，版本直接声明） -->
       <dependency>
         <groupId>org.apache.dubbo</groupId>
         <artifactId>dubbo</artifactId>
         <version>${dubbo.version}</version>
+      </dependency>
+      <!-- 注册中心传递依赖的版本锁定（与 Dubbo 3.3.6 期望一致） -->
+      <dependency>
+        <groupId>com.alibaba.nacos</groupId>
+        <artifactId>nacos-client</artifactId>
+        <version>2.5.1</version>
+      </dependency>
+      <!-- 插件自身使用的 JSON 库（Dubbo 3.x 不再传递 fastjson） -->
+      <dependency>
+        <groupId>com.alibaba</groupId>
+        <artifactId>fastjson</artifactId>
+        <version>1.2.83</version>
+      </dependency>
+      <!-- gson：Dubbo 3.3.6 的 GsonJsonUtil（JsonUtils SPI）依赖它，且 generic=gson 也用它 -->
+      <dependency>
+        <groupId>com.google.code.gson</groupId>
+        <artifactId>gson</artifactId>
+        <version>2.10.1</version>
+      </dependency>
+      <!-- Dubbo JsonUtils 的 jackson 扩展需要 JavaTimeModule，否则 NoClassDefFoundError -->
+      <dependency>
+        <groupId>com.fasterxml.jackson.datatype</groupId>
+        <artifactId>jackson-datatype-jsr310</artifactId>
+        <version>2.10.0</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.curator</groupId>
+        <artifactId>curator-x-discovery</artifactId>
+        <version>5.1.0</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.zookeeper</groupId>
+        <artifactId>zookeeper</artifactId>
+        <version>3.8.4</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

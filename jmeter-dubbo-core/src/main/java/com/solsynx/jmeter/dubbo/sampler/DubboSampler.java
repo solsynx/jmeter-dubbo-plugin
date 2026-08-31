@@ -47,9 +47,13 @@ public class DubboSampler extends AbstractSampler implements Serializable {
     private static final String REGISTRY_TIMEOUT = "DubboSampler.registryTimeout";
     private static final String REGISTRY_USERNAME = "DubboSampler.registryUsername";
     private static final String REGISTRY_PASSWORD = "DubboSampler.registryPassword";
+    private static final String REGISTRY_NAMESPACE = "DubboSampler.registryNamespace";
+    private static final String REGISTRY_ACCESS_KEY = "DubboSampler.registryAccessKey";
+    private static final String REGISTRY_SECRET_KEY = "DubboSampler.registrySecretKey";
     private static final String DIRECT_URL = "DubboSampler.directUrl";
     private static final String SERVICE_GROUP = "DubboSampler.serviceGroup";
     private static final String SERVICE_VERSION = "DubboSampler.serviceVersion";
+    private static final String SERVICE_PROVIDER = "DubboSampler.serviceProvider";
     private static final String INTERFACE_NAME = "DubboSampler.interfaceName";
     private static final String METHOD_NAME = "DubboSampler.methodName";
     private static final String SERVICE_TIMEOUT = "DubboSampler.serviceTimeout";
@@ -191,6 +195,60 @@ public class DubboSampler extends AbstractSampler implements Serializable {
     }
 
     /**
+     * 获取注册中心命名空间（Nacos）
+     *
+     * @return 注册中心命名空间
+     */
+    public String getRegistryNamespace() {
+        return getPropertyAsString(REGISTRY_NAMESPACE);
+    }
+
+    /**
+     * 设置注册中心命名空间（Nacos）
+     *
+     * @param registryNamespace 注册中心命名空间
+     */
+    public void setRegistryNamespace(String registryNamespace) {
+        setProperty(REGISTRY_NAMESPACE, registryNamespace);
+    }
+
+    /**
+     * 获取注册中心 AccessKey（Nacos 鉴权）
+     *
+     * @return 注册中心 AccessKey
+     */
+    public String getRegistryAccessKey() {
+        return getPropertyAsString(REGISTRY_ACCESS_KEY);
+    }
+
+    /**
+     * 设置注册中心 AccessKey（Nacos 鉴权）
+     *
+     * @param registryAccessKey 注册中心 AccessKey
+     */
+    public void setRegistryAccessKey(String registryAccessKey) {
+        setProperty(REGISTRY_ACCESS_KEY, registryAccessKey);
+    }
+
+    /**
+     * 获取注册中心 SecretKey（Nacos 鉴权）
+     *
+     * @return 注册中心 SecretKey
+     */
+    public String getRegistrySecretKey() {
+        return getPropertyAsString(REGISTRY_SECRET_KEY);
+    }
+
+    /**
+     * 设置注册中心 SecretKey（Nacos 鉴权）
+     *
+     * @param registrySecretKey 注册中心 SecretKey
+     */
+    public void setRegistrySecretKey(String registrySecretKey) {
+        setProperty(REGISTRY_SECRET_KEY, registrySecretKey);
+    }
+
+    /**
      * 获取直连 URL
      *
      * @return 直连 URL
@@ -242,6 +300,24 @@ public class DubboSampler extends AbstractSampler implements Serializable {
      */
     public void setServiceVersion(String serviceVersion) {
         setProperty(SERVICE_VERSION, serviceVersion);
+    }
+
+    /**
+     * 获取服务提供方应用名（provided-by，Dubbo 3 应用级发现必需）
+     *
+     * @return 服务提供方应用名
+     */
+    public String getServiceProvider() {
+        return getPropertyAsString(SERVICE_PROVIDER);
+    }
+
+    /**
+     * 设置服务提供方应用名（provided-by，Dubbo 3 应用级发现必需）
+     *
+     * @param serviceProvider 服务提供方应用名
+     */
+    public void setServiceProvider(String serviceProvider) {
+        setProperty(SERVICE_PROVIDER, serviceProvider);
     }
 
     /**

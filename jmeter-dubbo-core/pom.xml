@@ -30,6 +30,24 @@
       <groupId>org.apache.dubbo</groupId>
       <artifactId>dubbo</artifactId>
     </dependency>
+
+    <!-- fastjson：adaptParam 中 Properties 参数转换使用 -->
+    <dependency>
+      <groupId>com.alibaba</groupId>
+      <artifactId>fastjson</artifactId>
+    </dependency>
+
+    <!-- gson：Dubbo 3.3.6 的 GsonJsonUtil（JsonUtils SPI）与 generic=gson 泛化调用依赖它 -->
+    <dependency>
+      <groupId>com.google.code.gson</groupId>
+      <artifactId>gson</artifactId>
+    </dependency>
+
+    <!-- jackson Java8 时间模块：Dubbo JsonUtils 的 jackson 扩展需要它 -->
+    <dependency>
+      <groupId>com.fasterxml.jackson.datatype</groupId>
+      <artifactId>jackson-datatype-jsr310</artifactId>
+    </dependency>
   </dependencies>
 
 </project>

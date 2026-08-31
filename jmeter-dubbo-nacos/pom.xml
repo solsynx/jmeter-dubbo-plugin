@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>com.solsynx</groupId>
+    <artifactId>jmeter-dubbo-plugin</artifactId>
+    <version>0.0.8</version>
+  </parent>
+
+  <artifactId>jmeter-dubbo-nacos</artifactId>
+  <packaging>jar</packaging>
+
+  <name>JMeter Dubbo Plugin :: Registry Nacos</name>
+  <description>Nacos registry support for JMeter Dubbo Plugin</description>
+
+  <dependencies>
+    <!-- Core module dependency -->
+    <dependency>
+      <groupId>com.solsynx</groupId>
+      <artifactId>jmeter-dubbo-core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <!-- Nacos client, version managed by dubbo-dependencies-bom (1.4.2).
+         Compatible with Nacos server 1.x and 2.x, no extra gRPC deps required.
+         dubbo-registry-nacos is already pulled in transitively via the dubbo main artifact. -->
+    <dependency>
+      <groupId>com.alibaba.nacos</groupId>
+      <artifactId>nacos-client</artifactId>
+    </dependency>
+  </dependencies>
+
+</project>

@@ -52,11 +52,15 @@ public class DubboSamplerGui extends AbstractSamplerGui implements ActionListene
     private JLabeledTextField registryTimeoutField;
     private JLabeledTextField registryUsernameField;
     private JLabeledTextField registryPasswordField;
+    private JLabeledTextField registryNamespaceField;
+    private JLabeledTextField registryAccessKeyField;
+    private JLabeledTextField registrySecretKeyField;
 
     // Service configuration fields
     private JLabeledTextField directUrlField;
     private JLabeledTextField serviceGroupField;
     private JLabeledTextField serviceVersionField;
+    private JLabeledTextField serviceProviderField;
     private JLabeledTextField interfaceNameField;
     private JLabeledTextField methodNameField;
     private JLabeledTextField serviceTimeoutField;
@@ -134,11 +138,15 @@ public class DubboSamplerGui extends AbstractSamplerGui implements ActionListene
         sampler.setRegistryTimeout(getSafeText(registryTimeoutField));
         sampler.setRegistryUsername(getSafeText(registryUsernameField));
         sampler.setRegistryPassword(getSafeText(registryPasswordField));
+        sampler.setRegistryNamespace(getSafeText(registryNamespaceField));
+        sampler.setRegistryAccessKey(getSafeText(registryAccessKeyField));
+        sampler.setRegistrySecretKey(getSafeText(registrySecretKeyField));
 
         // Service configuration
         sampler.setDirectUrl(getSafeText(directUrlField));
         sampler.setServiceGroup(getSafeText(serviceGroupField));
         sampler.setServiceVersion(getSafeText(serviceVersionField));
+        sampler.setServiceProvider(getSafeText(serviceProviderField));
         sampler.setInterfaceName(getSafeText(interfaceNameField));
         sampler.setMethodName(getSafeText(methodNameField));
         sampler.setServiceTimeout(getSafeText(serviceTimeoutField));
@@ -181,11 +189,15 @@ public class DubboSamplerGui extends AbstractSamplerGui implements ActionListene
             registryTimeoutField.setText(sampler.getRegistryTimeout());
             registryUsernameField.setText(sampler.getRegistryUsername());
             registryPasswordField.setText(sampler.getRegistryPassword());
+            registryNamespaceField.setText(sampler.getRegistryNamespace());
+            registryAccessKeyField.setText(sampler.getRegistryAccessKey());
+            registrySecretKeyField.setText(sampler.getRegistrySecretKey());
 
             // Service configuration
             directUrlField.setText(sampler.getDirectUrl());
             serviceGroupField.setText(sampler.getServiceGroup());
             serviceVersionField.setText(sampler.getServiceVersion());
+            serviceProviderField.setText(sampler.getServiceProvider());
             interfaceNameField.setText(sampler.getInterfaceName());
             methodNameField.setText(sampler.getMethodName());
             serviceTimeoutField.setText(sampler.getServiceTimeout());
@@ -229,11 +241,15 @@ public class DubboSamplerGui extends AbstractSamplerGui implements ActionListene
 
         registryUsernameField.setText("");
         registryPasswordField.setText("");
+        registryNamespaceField.setText("");
+        registryAccessKeyField.setText("");
+        registrySecretKeyField.setText("");
 
         // Service configuration defaults
         directUrlField.setText("");
         serviceGroupField.setText("");
         serviceVersionField.setText("");
+        serviceProviderField.setText("");
         interfaceNameField.setText("");
         methodNameField.setText("");
         serviceTimeoutField.setText("1000");
@@ -320,8 +336,18 @@ public class DubboSamplerGui extends AbstractSamplerGui implements ActionListene
         registryDetailsPanel.add(registryUsernameField);
         registryDetailsPanel.add(registryPasswordField);
 
+        // Third row: Nacos 专属配置（命名空间、AccessKey、SecretKey）
+        JPanel nacosDetailsPanel = new HorizontalPanel();
+        registryNamespaceField = JMeterUtils.createJLabeledTextField("registryNamespace.displayName", 40);
+        registryAccessKeyField = JMeterUtils.createJLabeledTextField("registryAccessKey.displayName", 16);
+        registrySecretKeyField = JMeterUtils.createJLabeledTextField("registrySecretKey.displayName", 16);
+        nacosDetailsPanel.add(registryNamespaceField);
+        nacosDetailsPanel.add(registryAccessKeyField);
+        nacosDetailsPanel.add(registrySecretKeyField);
+
         panel.add(registryTypeAddressPanel);
         panel.add(registryDetailsPanel);
+        panel.add(nacosDetailsPanel);
         panel.setMinimumSize(panel.getPreferredSize());
         return panel;
     }
@@ -341,13 +367,15 @@ public class DubboSamplerGui extends AbstractSamplerGui implements ActionListene
         interfaceMethodPanel.add(interfaceNameField);
         interfaceMethodPanel.add(methodNameField);
 
-        // Second row: Service Group, Version and Timeout
+        // Second row: Service Group, Version, Provider(provided-by) and Timeout
         JPanel serviceDetailsPanel = new HorizontalPanel();
         serviceGroupField = JMeterUtils.createJLabeledTextField("serviceGroup.displayName", 12);
         serviceVersionField = JMeterUtils.createJLabeledTextField("serviceVersion.displayName", 12);
+        serviceProviderField = JMeterUtils.createJLabeledTextField("serviceProvider.displayName", 24);
         serviceTimeoutField = JMeterUtils.createJLabeledTextField("serviceTimeout.displayName", 12);
         serviceDetailsPanel.add(serviceGroupField);
         serviceDetailsPanel.add(serviceVersionField);
+        serviceDetailsPanel.add(serviceProviderField);
         serviceDetailsPanel.add(serviceTimeoutField);
 
         // Third row: Direct URL
