@@ -383,13 +383,17 @@ public class GenericDubbo {
     }
 
     /**
-     * 应用 Nacos 注册中心专属配置（命名空间、鉴权、组映射）
+     * 应用 Nacos 注册中心专属配置（命名空间、鉴权、组映射及发现模式）
      *
-     * <p>Dubbo 2.7 的 Nacos registry 会把注册中心 URL 中与 Nacos 客户端
+     * <p>Dubbo 3 的 Nacos registry 会把注册中心 URL 中与 Nacos 客户端
      * {@code PropertyKeyConst} 同名的参数透传给 Nacos 客户端，因此命名空间、
      * accessKey、secretKey 通过 RegistryConfig 的 parameters 注入即可生效。
      * Nacos 命名组通过 {@code nacos.group} 参数读取（默认 DEFAULT_GROUP），
-     * 这里将 GUI 上的"组"字段映射过去。</p>
+     * 这里将 GUI 上的“注册中心组”字段映射过去。</p>
+     *
+     * <p>当配置了服务提供方应用名（{@code provided-by}）时，使用 Dubbo 3
+     * 应用级服务发现（{@code registry-type=service}）；未配置时保持接口级发现，
+     * 兼容已注册接口级地址的服务。</p>
      *
      * @param context 服务上下文
      * @param registry 注册中心配置
@@ -414,10 +418,16 @@ public class GenericDubbo {
         if (StringUtils.isNotBlank(context.getRegistryPassword())) {
             parameters.put("password", context.getRegistryPassword());
         }
-        // 仅对 nacos 类型把"组"字段映射为 nacos.group，避免影响 zookeeper
+        // 仅对 nacos 类型把“注册中心组”字段映射为 nacos.group，避免影响 zookeeper
         if ("nacos".equals(context.getRegistryType())
                 && StringUtils.isNotBlank(context.getRegistryGroup())) {
             parameters.put("nacos.group", context.getRegistryGroup());
+        }
+        // 配置 provided-by 时显式启用 Dubbo 3 应用级服务发现。
+        // 未配置 provided-by 时不设置该参数，保持接口级发现行为。
+        if ("nacos".equals(context.getRegistryType())
+                && StringUtils.isNotBlank(context.getServiceProvider())) {
+            parameters.put("registry-type", "service");
         }
         if (!parameters.isEmpty()) {
             registry.setParameters(parameters);
